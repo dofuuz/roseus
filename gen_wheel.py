@@ -1,89 +1,134 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Mar 20 08:57:50 2021
+Created on Sat Mar 20 11:54:56 2021
 
 @author: dof
 """
 
-from colorspacious import cspace_converter, cspace_convert, CIECAM02Space
+
+import colorspacious
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy.ndimage
 
-h_len = len(np.arange(0, 100.1, 1))
-C_h_ = np.mgrid[0:100.1:1, 0:400.1:1].reshape(2, h_len, -1).T
-J_ = np.ones(C_h_.shape[:-1]) * 50
-J_ = np.expand_dims(J_, 2)
+from matplotlib.colors import ListedColormap
+from scipy.ndimage import filters
 
-J_C_h = np.concatenate([J_, C_h_], axis=2)
 
-rgb = cspace_convert(J_C_h, "JCh", "sRGB1")
-rgb[rgb<0] = 1
-rgb[1<rgb] = 0
+'''
+J = lightness
+C = chroma
+h = hue
+'''
 
-# plt.imshow(rgb)
+# Resolution of colorspace
+J_RES = 512
+C_RES = 512
 
-offset = 150
-J_ = np.linspace(0, 100, 256)
-h_ = np.linspace(0+offset, 360+offset, 256)
+# NAME = 'So normal'
+# ANGLE = np.pi * 2 * 0.7
+# OFFSET = np.pi * 2 * 0.64
+# CCW = False
+# SMOOTH = 1/3
 
-JCh = np.zeros((100, 256, 3))
-for idx in range(0, 256):
-    for cdx in range(0, 100):
-        JCh[cdx, idx] = (J_[idx], cdx, h_[idx])
+# NAME = 'Wow unique'
+# ANGLE = np.pi * 2 * 1.0
+# OFFSET = np.pi * 2 * 0.275
+# CCW = True
+# SMOOTH = 1/2
 
-rgb2 = cspace_convert(JCh, "JCh", "sRGB255")
+# NAME = 'Viridis-like (red bg)'
+# ANGLE = np.pi * 2 * 1.0
+# OFFSET = np.pi * 2 * 0.1
+# CCW = True
+# SMOOTH = 1/4
 
-c_limit = np.zeros_like(J_, dtype=int)
-for idx in range(len(J_)):
-    max_c = 99
-    for cdx in range(100):
-        if np.any(rgb2[cdx, idx] < 0) or np.any(255 < rgb2[cdx, idx]):
-            max_c = cdx - 1
+# NAME = 'Viridis-like (purple bg)'
+# ANGLE = np.pi * 2 * 0.9
+# OFFSET = np.pi * 2 * 0.1
+# CCW = True
+# SMOOTH = 1/5
+
+NAME = 'Audacity proposal'
+ANGLE = np.pi * 2 * 0.85
+OFFSET = np.pi * 2 * 0.5
+CCW = False
+SMOOTH = 1/4
+
+
+j_space = np.linspace(1, 101, J_RES)
+c_space = np.linspace(0, 50, C_RES)
+
+if CCW:
+    h_ = np.linspace(ANGLE+OFFSET, OFFSET, J_RES)
+else:
+    h_ = np.linspace(OFFSET, ANGLE+OFFSET, J_RES)
+
+jpapbp = np.zeros([C_RES, J_RES, 3])
+for jdx, jp in enumerate(j_space):
+    for cdx, chroma in enumerate(c_space):
+        ap = np.cos(h_[jdx]) * chroma
+        bp = np.sin(h_[jdx]) * chroma
+        jpapbp[cdx, jdx] = (jp, ap, bp)
+
+rgb = colorspacious.cspace_convert(jpapbp, "CAM02-UCS", "sRGB255")
+
+c_limit = np.zeros_like(j_space)
+for jdx in range(J_RES):
+    max_cdx = 0
+    for cdx in range(C_RES):
+        if np.any(rgb[cdx, jdx] < 0) or np.any(255 < rgb[cdx, jdx]):
+            max_cdx = cdx - 1
             break
         
-    c_limit[idx] = max(0, max_c)
+    c_limit[jdx] = max_cdx
 
-c_limit_smoothed = scipy.ndimage.filters.uniform_filter1d(c_limit, 40, mode='constant')
-c_limit = np.min(np.vstack((c_limit, c_limit_smoothed)), axis=0)
+c_smoothed = filters.uniform_filter1d(c_limit, int(J_RES*SMOOTH), mode='constant', cval=-(C_RES*SMOOTH))
+# c_limit = np.min(np.vstack((c_limit, c_smoothed)), axis=0)
+c_selected = c_smoothed.clip(min=0).astype(int)
 
-rgb2_ = np.asarray(rgb2, dtype=int)
-rgb2_[rgb2_<0] = 255
-rgb2_[255<rgb2_] = 0
+gamut_image = np.asarray(rgb, dtype=int)
+gamut_image[gamut_image<0] = 255
+gamut_image[255<gamut_image] = 0
+
 
 cm_data = []
-for idx, max_c in enumerate(c_limit):
-    cm_data.append(rgb2[max_c, idx]/255)
-    rgb2_[max_c, idx] = 128
+for jdx, max_c in enumerate(c_selected):
+    cm_data.append(rgb[max_c, jdx]/255)
+    gamut_image[max_c, jdx] = 128
 cm_data = np.clip(cm_data, 0, 1)
 
-plt.imshow(rgb2_)
+plt.imshow(gamut_image)
 
 
-
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-test_cm = ListedColormap(cm_data, name="vividis")
-
-import matplotlib.pyplot as plt
-import numpy as np
+test_cm = ListedColormap(cm_data, name=NAME)
 
 try:
     from viscm import viscm
     viscm(test_cm)
 except ImportError:
     print("viscm not found, falling back on simple display")
-    plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto',
-                cmap=test_cm)
-plt.show()
+    plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto', cmap=test_cm)
+
+cm255 = np.asarray(cm_data) * 255
+seg_simple = 5
 
 plt.figure()
 fix, ax = plt.subplots()
-plt.plot(np.asarray(cm_data)*256)
-plt.plot(np.mean(np.asarray(cm_data)*256, axis=1))
+plt.plot(cm255[:,0], 'r')
+plt.plot(cm255[:,1], 'g')
+plt.plot(cm255[:,2], 'b')
+plt.plot(np.mean(cm255, axis=1))
 # plt.plot(np.arange(0, 257, 256/seg_simple), np.asarray(cm_simplified)*256)
 # plt.plot(np.arange(0, 257, 256/seg_simple), np.mean(np.asarray(cm_simplified)*256, axis=1))
-# ax.set_xticks(np.arange(0, 256, 256/seg_simple))
-ax.set_yticks(np.arange(0, 256, 16))
+ax.set_xticks(np.linspace(0, 512, seg_simple, endpoint=False))
+ax.set_yticks(np.arange(0, 257, 16))
 
 ax.grid(which='both')
 plt.show()
+
+cm_data_u8 = (cm_data*255).astype('uint8')
+with open('AColorResources.h', 'wt') as output_file:
+    print('const unsigned char spectroGradient[512][3] = {', file=output_file)
+    for r, g, b in cm_data_u8:
+        print('   {%3d, %3d, %3d},' % (r, g, b), file=output_file)
+    print('};', file=output_file)
