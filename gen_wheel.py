@@ -22,7 +22,7 @@ h = hue
 
 # Resolution of colorspace
 J_RES = 512
-C_RES = 512
+C_RES = 8192
 
 # NAME = 'So normal'
 # ANGLE = np.pi * 2 * 0.7
@@ -49,7 +49,7 @@ C_RES = 512
 # SMOOTH = 1/5
 
 NAME = 'Audacity proposal'
-ANGLE = np.pi * 2 * 0.85
+ANGLE = np.pi * 2 * 0.875
 OFFSET = np.pi * 2 * 0.5
 CCW = False
 SMOOTH = 1/4
@@ -63,6 +63,7 @@ if CCW:
 else:
     h_ = np.linspace(OFFSET, ANGLE+OFFSET, J_RES)
 
+# Generate Jpapbp colorspace
 jpapbp = np.zeros([C_RES, J_RES, 3])
 for jdx, jp in enumerate(j_space):
     for cdx, chroma in enumerate(c_space):
@@ -70,8 +71,10 @@ for jdx, jp in enumerate(j_space):
         bp = np.sin(h_[jdx]) * chroma
         jpapbp[cdx, jdx] = (jp, ap, bp)
 
+# Convert to sRGB
 rgb = colorspacious.cspace_convert(jpapbp, "CAM02-UCS", "sRGB255")
 
+# Get chroma limit of sRGB
 c_limit = np.zeros_like(j_space)
 for jdx in range(J_RES):
     max_cdx = 0
@@ -82,19 +85,24 @@ for jdx in range(J_RES):
         
     c_limit[jdx] = max_cdx
 
+# Smooth contour
 c_smoothed = filters.uniform_filter1d(c_limit, int(J_RES*SMOOTH), mode='constant', cval=-(C_RES*SMOOTH))
 # c_limit = np.min(np.vstack((c_limit, c_smoothed)), axis=0)
 c_selected = c_smoothed.clip(min=0).astype(int)
 
+# Generate gaumt image
 gamut_image = np.asarray(rgb, dtype=int)
-gamut_image[gamut_image<0] = 255
+gamut_image[gamut_image<=0] = 255
 gamut_image[255<gamut_image] = 0
 
-
+# Select color, and mark on image
 cm_data = []
 for jdx, max_c in enumerate(c_selected):
     cm_data.append(rgb[max_c, jdx]/255)
-    gamut_image[max_c, jdx] = 128
+    if 0 == jdx % 2:
+        gamut_image[max_c, jdx] = 255
+    else:
+        gamut_image[max_c, jdx] = 0
 cm_data = np.clip(cm_data, 0, 1)
 
 plt.imshow(gamut_image)
@@ -110,9 +118,8 @@ except ImportError:
     plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto', cmap=test_cm)
 
 cm255 = np.asarray(cm_data) * 255
-seg_simple = 5
+seg_simple = 8
 
-plt.figure()
 fix, ax = plt.subplots()
 plt.plot(cm255[:,0], 'r')
 plt.plot(cm255[:,1], 'g')
@@ -120,7 +127,7 @@ plt.plot(cm255[:,2], 'b')
 plt.plot(np.mean(cm255, axis=1))
 # plt.plot(np.arange(0, 257, 256/seg_simple), np.asarray(cm_simplified)*256)
 # plt.plot(np.arange(0, 257, 256/seg_simple), np.mean(np.asarray(cm_simplified)*256, axis=1))
-ax.set_xticks(np.linspace(0, 512, seg_simple, endpoint=False))
+ax.set_xticks(np.linspace(0, J_RES, seg_simple, endpoint=False))
 ax.set_yticks(np.arange(0, 257, 16))
 
 ax.grid(which='both')
