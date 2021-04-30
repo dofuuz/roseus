@@ -22,7 +22,7 @@ h = hue
 
 # Resolution of colorspace
 J_RES = 512
-C_RES = 8192
+C_RES = 512
 
 # NAME = 'So normal'
 # ANGLE = np.pi * 2 * 0.7
@@ -72,14 +72,14 @@ for jdx, jp in enumerate(j_space):
         jpapbp[cdx, jdx] = (jp, ap, bp)
 
 # Convert to sRGB
-rgb = colorspacious.cspace_convert(jpapbp, "CAM02-UCS", "sRGB255")
+rgb = colorspacious.cspace_convert(jpapbp, "CAM02-UCS", "sRGB1")
 
 # Get chroma limit of sRGB
 c_limit = np.zeros_like(j_space)
 for jdx in range(J_RES):
     max_cdx = 0
-    for cdx in range(C_RES):
-        if np.any(rgb[cdx, jdx] < 0) or np.any(255 < rgb[cdx, jdx]):
+    for cdx in range(1, C_RES):
+        if np.any(rgb[cdx, jdx] <= 0) or np.any(1 < rgb[cdx, jdx]):
             max_cdx = cdx - 1
             break
         
@@ -91,20 +91,33 @@ c_smoothed = filters.uniform_filter1d(c_limit, int(J_RES*SMOOTH), mode='constant
 c_selected = c_smoothed.clip(min=0).astype(int)
 
 # Generate gaumt image
-gamut_image = np.asarray(rgb, dtype=int)
-gamut_image[gamut_image<=0] = 255
-gamut_image[255<gamut_image] = 0
+gamut_image = np.copy(rgb)
+gamut_image[gamut_image<=0] = 1
+gamut_image[1<gamut_image] = 0
 
 # Select color, and mark on image
 cm_data = []
 for jdx, max_c in enumerate(c_selected):
-    cm_data.append(rgb[max_c, jdx]/255)
     if 0 == jdx % 2:
-        gamut_image[max_c, jdx] = 255
+        gamut_image[max_c, jdx] = 1
     else:
         gamut_image[max_c, jdx] = 0
+
+
+c_real = c_smoothed * 50 / C_RES
+
+cm_data = []
+for jdx, chroma in enumerate(c_real):
+    jp = j_space[jdx]
+    ap = np.cos(h_[jdx]) * chroma
+    bp = np.sin(h_[jdx]) * chroma
+
+    cm_data.append([jp, ap, bp])
+
+cm_data = colorspacious.cspace_convert(cm_data, "CAM02-UCS", "sRGB1")
 cm_data = np.clip(cm_data, 0, 1)
 
+plt.figure(figsize=[10, 10])
 plt.imshow(gamut_image)
 
 
