@@ -5,6 +5,7 @@ Created on Sat Mar 20 11:54:56 2021
 @author: dof
 """
 
+import math
 
 import colorspacious
 import matplotlib.pyplot as plt
@@ -12,6 +13,7 @@ import numpy as np
 
 from matplotlib.colors import ListedColormap
 from scipy.ndimage import filters
+from scipy.signal import savgol_filter
 
 
 '''
@@ -52,10 +54,10 @@ NAME = 'Audacity proposal'
 ANGLE = np.pi * 2 * 0.875
 OFFSET = np.pi * 2 * 0.5
 CCW = False
-SMOOTH = 1/4
+SMOOTH = 1/3
 
 
-j_space = np.linspace(1, 101, J_RES)
+j_space = np.linspace(0.1, 100, J_RES)
 c_space = np.linspace(0, 50, C_RES)
 
 if CCW:
@@ -85,9 +87,23 @@ for jdx in range(J_RES):
         
     c_limit[jdx] = max_cdx
 
+
+# Generate contour
+# b = C_RES * 3 / 4 * 0.9
+# d = np.linspace(0, 100, J_RES)
+# c_smoothed = -b/(50**2) * (d-50)**2 + b
+
+
 # Smooth contour
-c_smoothed = filters.uniform_filter1d(c_limit, int(J_RES*SMOOTH), mode='constant', cval=-(C_RES*SMOOTH))
-# c_limit = np.min(np.vstack((c_limit, c_smoothed)), axis=0)
+c_smoothed = np.concatenate([-c_limit[::-1][:-1], c_limit, -c_limit[::-1][1:]])
+
+# c_smoothed = filters.uniform_filter1d(c_smoothed, int(J_RES*SMOOTH))
+
+c_smoothed = savgol_filter(c_smoothed, math.ceil(J_RES*SMOOTH*1.5/2)*2 - 1, 3)
+c_smoothed = filters.uniform_filter1d(c_smoothed, int(J_RES*SMOOTH*1.5/2)) * 0.95
+
+c_smoothed = c_smoothed[J_RES:2*J_RES]
+
 c_selected = c_smoothed.clip(min=0).astype(int)
 
 # Generate gaumt image
@@ -146,7 +162,7 @@ ax.set_yticks(np.arange(0, 257, 16))
 ax.grid(which='both')
 plt.show()
 
-cm_data_u8 = (cm_data*255).astype('uint8')
+cm_data_u8 = (cm_data*255 + 0.5).astype('uint8')
 with open('AColorResources.h', 'wt') as output_file:
     print('const unsigned char spectroGradient[512][3] = {', file=output_file)
     for r, g, b in cm_data_u8:
