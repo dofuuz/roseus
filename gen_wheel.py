@@ -23,8 +23,8 @@ h = hue
 '''
 
 # Resolution of colorspace
-J_RES = 512
-C_RES = 512
+J_RES = 256
+C_RES = 256
 
 # NAME = 'So normal'
 # ANGLE = np.pi * 2 * 0.7
@@ -55,6 +55,8 @@ ANGLE = np.pi * 2 * 0.875
 OFFSET = np.pi * 2 * 0.5
 CCW = False
 SMOOTH = 1/3
+
+DIMMING = 0.95
 
 
 # Generate CAM02-UCS(Jp, ap, bp) colorspace
@@ -93,7 +95,7 @@ for jdx in range(J_RES):
 c_smoothed = np.concatenate([-c_limit[::-1][:-1], c_limit, -c_limit[::-1][1:]])
 
 c_smoothed = savgol_filter(c_smoothed, math.ceil(J_RES*SMOOTH*1.5/2)*2 - 1, 3)
-c_smoothed = filters.uniform_filter1d(c_smoothed, int(J_RES*SMOOTH*1.5/2)) * 0.95
+c_smoothed = filters.uniform_filter1d(c_smoothed, int(J_RES*SMOOTH*1.5/2)) * DIMMING
 
 c_smoothed = c_smoothed[J_RES:2*J_RES]
 
@@ -112,7 +114,7 @@ for jdx, max_c in enumerate(c_selected):
     else:
         gamut_image[max_c, jdx] = 0
 
-plt.figure(figsize=[10, 10])
+plt.figure(figsize=[5, 5])
 plt.imshow(gamut_image)
 
 
@@ -126,8 +128,8 @@ for jdx, cdx in enumerate(c_smoothed):
 
     cm_jpapbp.append([jp, ap, bp])
 
-cm_data = colorspacious.cspace_convert(cm_jpapbp, "CAM02-UCS", "sRGB1")
-cm_data = np.clip(cm_data, 0, 1)
+cm_rgb = colorspacious.cspace_convert(cm_jpapbp, "CAM02-UCS", "sRGB1")
+cm_data = np.clip(cm_rgb, 0, 1)
 
 
 # Display viscm
@@ -160,8 +162,14 @@ plt.show()
 
 # Save colormap to C format
 cm_data_u8 = (cm_data*255 + 0.5).astype('uint8')
+cm_selected_u8 = (np.clip((cm_rgb*0.8 + 0.3), 0, 1)*255 + 0.5).astype('uint8')
 with open('AColorResources.h', 'wt') as output_file:
-    print('const unsigned char spectroGradient[512][3] = {', file=output_file)
+    print('const unsigned char spectroGradient[%d][3] = {' % J_RES, file=output_file)
     for r, g, b in cm_data_u8:
+        print('   {%3d, %3d, %3d},' % (r, g, b), file=output_file)
+    print('};', file=output_file)
+
+    print('const unsigned char selectedColormap[%d][3] = {' % J_RES, file=output_file)
+    for r, g, b in cm_selected_u8:
         print('   {%3d, %3d, %3d},' % (r, g, b), file=output_file)
     print('};', file=output_file)
