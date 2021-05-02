@@ -7,7 +7,7 @@ Created on Sat Mar 20 11:54:56 2021
 
 import math
 
-import colorspacious
+from colorspacious import cspace_convert
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -56,11 +56,11 @@ OFFSET = np.pi * 2 * 0.5
 CCW = False
 SMOOTH = 1/3
 
-DIMMING = 0.95
+DIMMING = 0.9
 
 
 # Generate CAM02-UCS(Jp, ap, bp) colorspace
-j_space = np.linspace(0.1, 100, J_RES)
+j_space = np.linspace(0.1, 99, J_RES)
 c_space = np.linspace(0, 50, C_RES)
 
 if CCW:
@@ -76,7 +76,7 @@ for jdx, jp in enumerate(j_space):
         jpapbp[cdx, jdx] = (jp, ap, bp)
 
 # Convert to sRGB
-rgb = colorspacious.cspace_convert(jpapbp, "CAM02-UCS", "sRGB1")
+rgb = cspace_convert(jpapbp, "CAM02-UCS", "sRGB1")
 
 
 # Get chroma limit of sRGB
@@ -128,7 +128,7 @@ for jdx, cdx in enumerate(c_smoothed):
 
     cm_jpapbp.append([jp, ap, bp])
 
-cm_rgb = colorspacious.cspace_convert(cm_jpapbp, "CAM02-UCS", "sRGB1")
+cm_rgb = cspace_convert(cm_jpapbp, "CAM02-UCS", "sRGB1")
 cm_data = np.clip(cm_rgb, 0, 1)
 
 
@@ -160,16 +160,32 @@ ax.grid(which='both')
 plt.show()
 
 
-# Save colormap to C format
+# Generate uint8 format colormaps
 cm_data_u8 = (cm_data*255 + 0.5).astype('uint8')
-cm_selected_u8 = (np.clip((cm_rgb*0.8 + 0.3), 0, 1)*255 + 0.5).astype('uint8')
-with open('AColorResources.h', 'wt') as output_file:
-    print('const unsigned char spectroGradient[%d][3] = {' % J_RES, file=output_file)
-    for r, g, b in cm_data_u8:
-        print('   {%3d, %3d, %3d},' % (r, g, b), file=output_file)
-    print('};', file=output_file)
 
-    print('const unsigned char selectedColormap[%d][3] = {' % J_RES, file=output_file)
+cm_selected = cm_rgb*0.8 + 0.3
+cm_selected_u8 = (np.clip(cm_selected, 0, 1)*255 + 0.5).astype('uint8')
+
+cm_data_JCh = cspace_convert(cm_rgb, "sRGB1", "JCh")
+cm_data_JCh[..., 0] += 20   # Boost lightness
+cm_data_JCh[..., 1] += 20   # Boost chroma
+cm_data_JCh[..., 2] += 90   # Change hue
+cm_sel_freq = cspace_convert(cm_data_JCh, "JCh", "sRGB1")
+cm_sel_freq_u8 = (np.clip(cm_sel_freq, 0, 1)*255 + 0.5).astype('uint8')
+
+# Save colormaps to C format
+with open('AColorResources.h', 'wt') as ofile:
+    ofile.write('const unsigned char specColormap[%d][3] = {\n' % J_RES)
+    for r, g, b in cm_data_u8:
+        ofile.write('   {%3d, %3d, %3d},\n' % (r, g, b))
+    ofile.write('};\n\n')
+
+    ofile.write('const unsigned char selColormap[%d][3] = {' % J_RES)
     for r, g, b in cm_selected_u8:
-        print('   {%3d, %3d, %3d},' % (r, g, b), file=output_file)
-    print('};', file=output_file)
+        ofile.write('   {%3d, %3d, %3d},\n' % (r, g, b))
+    ofile.write('};\n\n')
+    
+    ofile.write('const unsigned char freqSelColormap[%d][3] = {' % J_RES)
+    for r, g, b in cm_sel_freq_u8:
+        ofile.write('   {%3d, %3d, %3d},\n' % (r, g, b))
+    ofile.write('};\n\n')
