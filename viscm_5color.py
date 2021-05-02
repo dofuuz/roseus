@@ -9,6 +9,7 @@ import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 
 
+cm_name = 'Audicity Light'
 cm_data = np.asarray([
     (192/255, 192/255, 192/255),
     (76/255, 153/255, 255/255),
@@ -17,10 +18,35 @@ cm_data = np.asarray([
     (255/255,  255/255, 255/255),
 ])
 
+# cm_name = 'Magma(5 color)'
+# cm_data = np.asarray([
+#     (8/255, 0/255, 8/255),
+#     (80/255, 0/255, 128/255),
+#     (208/255, 32/255, 80/255),
+#     (255/255, 160/255, 0/255),
+#     (255/255,  255/255, 248/255),
+# ])
 
-seg_simple = len(cm_data)-1
+# cm_name = 'Audacity proposal-alt'
+# cm_data = np.asarray([
+#     (8/255, 0/255, 8/255),
+#     (64/255, 0/255, 144/255),
+#     (192/255, 16/255, 176/255),
+#     (255/255, 144/255, 32/255),
+#     (255/255, 255/255, 248/255),
+# ])
 
-test_cm = LinearSegmentedColormap.from_list("Audacity Light", cm_data)
+# cm_name = 'Audacity proposal(5 color)'
+# cm_data = np.asarray([
+#     (0/255, 0/255, 8/255),
+#     (0/255, 48/255, 144/255),
+#     (192/255, 16/255, 176/255),
+#     (255/255, 144/255, 32/255),
+#     (255/255,  255/255, 248/255),
+# ])
+
+
+test_cm = LinearSegmentedColormap.from_list(cm_name, cm_data)
 
 
 if __name__ == "__main__":
@@ -34,9 +60,7 @@ if __name__ == "__main__":
         print("viscm not found, falling back on simple display")
         plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto',
                     cmap=test_cm)
-    plt.show()
     
-    plt.figure()
     fix, ax = plt.subplots()
     plt.plot(cm_data[:,0], 'r')
     plt.plot(cm_data[:,1], 'g')
