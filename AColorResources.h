@@ -257,7 +257,8 @@ const unsigned char specColormap[256][3] = {
    {255, 250, 250},
 };
 
-const unsigned char selColormap[256][3] = {   { 77,  77,  77},
+const unsigned char selColormap[256][3] = {
+   { 77,  77,  77},
    { 77,  77,  77},
    { 77,  77,  77},
    { 77,  77,  77},
@@ -515,7 +516,8 @@ const unsigned char selColormap[256][3] = {   { 77,  77,  77},
    {255, 255, 255},
 };
 
-const unsigned char freqSelColormap[256][3] = {   { 62,  65,  89},
+const unsigned char freqSelColormap[256][3] = {
+   { 62,  65,  89},
    { 63,  65,  91},
    { 64,  66,  92},
    { 65,  66,  94},

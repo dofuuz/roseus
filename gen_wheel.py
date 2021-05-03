@@ -56,7 +56,7 @@ OFFSET = np.pi * 2 * 0.5
 CCW = False
 SMOOTH = 1/3
 
-DIMMING = 0.9
+DESATURATE = 0.9
 
 
 # Generate CAM02-UCS(Jp, ap, bp) colorspace
@@ -95,7 +95,7 @@ for jdx in range(J_RES):
 c_smoothed = np.concatenate([-c_limit[::-1][:-1], c_limit, -c_limit[::-1][1:]])
 
 c_smoothed = savgol_filter(c_smoothed, math.ceil(J_RES*SMOOTH*1.5/2)*2 - 1, 3)
-c_smoothed = filters.uniform_filter1d(c_smoothed, int(J_RES*SMOOTH*1.5/2)) * DIMMING
+c_smoothed = filters.uniform_filter1d(c_smoothed, int(J_RES*SMOOTH*1.5/2)) * DESATURATE
 
 c_smoothed = c_smoothed[J_RES:2*J_RES]
 
@@ -180,12 +180,12 @@ with open('AColorResources.h', 'wt') as ofile:
         ofile.write('   {%3d, %3d, %3d},\n' % (r, g, b))
     ofile.write('};\n\n')
 
-    ofile.write('const unsigned char selColormap[%d][3] = {' % J_RES)
+    ofile.write('const unsigned char selColormap[%d][3] = {\n' % J_RES)
     for r, g, b in cm_selected_u8:
         ofile.write('   {%3d, %3d, %3d},\n' % (r, g, b))
     ofile.write('};\n\n')
     
-    ofile.write('const unsigned char freqSelColormap[%d][3] = {' % J_RES)
+    ofile.write('const unsigned char freqSelColormap[%d][3] = {\n' % J_RES)
     for r, g, b in cm_sel_freq_u8:
         ofile.write('   {%3d, %3d, %3d},\n' % (r, g, b))
     ofile.write('};\n\n')
