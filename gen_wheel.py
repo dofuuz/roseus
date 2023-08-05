@@ -7,12 +7,12 @@ Created on Sat Mar 20 11:54:56 2021
 
 import math
 
-from colorspacious import cspace_convert
+import colour
 import matplotlib.pyplot as plt
 import numpy as np
 
 from matplotlib.colors import ListedColormap
-from scipy.ndimage import filters
+from scipy import ndimage
 from scipy.signal import savgol_filter
 
 
@@ -50,13 +50,25 @@ C_RES = 256
 # CCW = True
 # SMOOTH = 1/5
 
-NAME = 'Audacity proposal'
+NAME = 'AudaSpec+'
 ANGLE = np.pi * 2 * 0.875
 OFFSET = np.pi * 2 * 0.5
 CCW = False
 SMOOTH = 1/3
 
 DESATURATE = 0.9
+
+
+def cam02_to_srgb(jab):
+    xyz = colour.CAM02UCS_to_XYZ(jab)
+    rgb = colour.XYZ_to_sRGB(xyz)
+    return rgb
+
+
+def srgb_to_cam02(rgb):
+    xyz = colour.sRGB_to_XYZ(rgb)
+    jab = colour.XYZ_to_CAM02UCS(xyz)
+    return jab
 
 
 # Generate CAM02-UCS(Jp, ap, bp) colorspace
@@ -67,16 +79,16 @@ if CCW:
     h_ = np.linspace(ANGLE+OFFSET, OFFSET, J_RES)
 else:
     h_ = np.linspace(OFFSET, ANGLE+OFFSET, J_RES)
+h_ = np.degrees(h_)
 
-jpapbp = np.zeros([C_RES, J_RES, 3])
-for jdx, jp in enumerate(j_space):
-    for cdx, chroma in enumerate(c_space):
-        ap = np.cos(h_[jdx]) * chroma
-        bp = np.sin(h_[jdx]) * chroma
-        jpapbp[cdx, jdx] = (jp, ap, bp)
+jch = np.zeros([C_RES, J_RES, 3])
+jch[..., 0] = j_space
+jch[..., 1] = np.expand_dims(c_space, 1)
+jch[..., 2] = h_
+jpapbp = colour.models.JCh_to_Jab(jch)
 
 # Convert to sRGB
-rgb = cspace_convert(jpapbp, "CAM02-UCS", "sRGB1")
+rgb = cam02_to_srgb(jpapbp)
 
 
 # Get chroma limit of sRGB
@@ -95,7 +107,7 @@ for jdx in range(J_RES):
 c_smoothed = np.concatenate([-c_limit[::-1][:-1], c_limit, -c_limit[::-1][1:]])
 
 c_smoothed = savgol_filter(c_smoothed, math.ceil(J_RES*SMOOTH*1.5/2)*2 - 1, 3)
-c_smoothed = filters.uniform_filter1d(c_smoothed, int(J_RES*SMOOTH*1.5/2)) * DESATURATE
+c_smoothed = ndimage.uniform_filter1d(c_smoothed, int(J_RES*SMOOTH*1.5/2)) * DESATURATE
 
 c_smoothed = c_smoothed[J_RES:2*J_RES]
 
@@ -119,16 +131,11 @@ plt.imshow(gamut_image)
 
 
 # Get colors on contour
-cm_jpapbp = []
-for jdx, cdx in enumerate(c_smoothed):
-    chroma = cdx * 50 / C_RES
-    jp = j_space[jdx]
-    ap = np.cos(h_[jdx]) * chroma
-    bp = np.sin(h_[jdx]) * chroma
+chroma = c_smoothed * 50 / C_RES
+cm_data_JCh = np.stack([j_space, chroma, h_], axis=-1)
+cm_jpapbp = colour.models.JCh_to_Jab(cm_data_JCh)
 
-    cm_jpapbp.append([jp, ap, bp])
-
-cm_rgb = cspace_convert(cm_jpapbp, "CAM02-UCS", "sRGB1")
+cm_rgb = cam02_to_srgb(cm_jpapbp)
 cm_data = np.clip(cm_rgb, 0, 1)
 
 
@@ -166,11 +173,11 @@ cm_data_u8 = (cm_data*255 + 0.5).astype('uint8')
 cm_selected = cm_rgb*0.8 + 0.3
 cm_selected_u8 = (np.clip(cm_selected, 0, 1)*255 + 0.5).astype('uint8')
 
-cm_data_JCh = cspace_convert(cm_rgb, "sRGB1", "JCh")
 cm_data_JCh[..., 0] += 20   # Boost lightness
-cm_data_JCh[..., 1] += 20   # Boost chroma
+cm_data_JCh[..., 1] += 5   # Boost chroma
 cm_data_JCh[..., 2] += 90   # Change hue
-cm_sel_freq = cspace_convert(cm_data_JCh, "JCh", "sRGB1")
+cm_data_jab = colour.models.JCh_to_Jab(cm_data_JCh)
+cm_sel_freq = cam02_to_srgb(cm_data_jab)
 cm_sel_freq_u8 = (np.clip(cm_sel_freq, 0, 1)*255 + 0.5).astype('uint8')
 
 # Save colormaps to C format
