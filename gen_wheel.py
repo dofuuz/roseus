@@ -59,15 +59,15 @@ SMOOTH = 1/3
 DESATURATE = 0.9
 
 
-def cam02_to_srgb(jab):
-    xyz = colour.CAM02UCS_to_XYZ(jab)
+def cam16_to_srgb(jab):
+    xyz = colour.CAM16UCS_to_XYZ(jab)
     rgb = colour.XYZ_to_sRGB(xyz)
     return rgb
 
 
-def srgb_to_cam02(rgb):
+def srgb_to_cam16(rgb):
     xyz = colour.sRGB_to_XYZ(rgb)
-    jab = colour.XYZ_to_CAM02UCS(xyz)
+    jab = colour.XYZ_to_CAM16UCS(xyz)
     return jab
 
 
@@ -88,7 +88,7 @@ jch[..., 2] = h_
 jpapbp = colour.models.JCh_to_Jab(jch)
 
 # Convert to sRGB
-rgb = cam02_to_srgb(jpapbp)
+rgb = cam16_to_srgb(jpapbp)
 
 
 # Get chroma limit of sRGB
@@ -135,7 +135,7 @@ chroma = c_smoothed * 50 / C_RES
 cm_data_JCh = np.stack([j_space, chroma, h_], axis=-1)
 cm_jpapbp = colour.models.JCh_to_Jab(cm_data_JCh)
 
-cm_rgb = cam02_to_srgb(cm_jpapbp)
+cm_rgb = cam16_to_srgb(cm_jpapbp)
 cm_data = np.clip(cm_rgb, 0, 1)
 
 
@@ -177,7 +177,7 @@ cm_data_JCh[..., 0] += 20   # Boost lightness
 cm_data_JCh[..., 1] += 5   # Boost chroma
 cm_data_JCh[..., 2] += 90   # Change hue
 cm_data_jab = colour.models.JCh_to_Jab(cm_data_JCh)
-cm_sel_freq = cam02_to_srgb(cm_data_jab)
+cm_sel_freq = cam16_to_srgb(cm_data_jab)
 cm_sel_freq_u8 = (np.clip(cm_sel_freq, 0, 1)*255 + 0.5).astype('uint8')
 
 # Save colormaps to C format
