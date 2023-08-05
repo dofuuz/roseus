@@ -23,7 +23,7 @@ h = hue
 '''
 
 # Resolution of colorspace
-J_RES = 256
+J_RES = 100000
 C_RES = 256
 
 # NAME = 'So normal'
@@ -50,7 +50,7 @@ C_RES = 256
 # CCW = True
 # SMOOTH = 1/5
 
-NAME = 'AudaSpec+'
+NAME = 'AudaSpec1+'
 ANGLE = np.pi * 2 * 0.875
 OFFSET = np.pi * 2 * 0.5
 CCW = False
@@ -132,8 +132,41 @@ plt.imshow(gamut_image)
 
 # Get colors on contour
 chroma = c_smoothed * 50 / C_RES
-cm_data_JCh = np.stack([j_space, chroma, h_], axis=-1)
-cm_jpapbp = colour.models.JCh_to_Jab(cm_data_JCh)
+jch = np.stack([j_space, chroma, h_], axis=-1)
+
+# ab 곡선을 정의
+cm_jpapbp = colour.models.JCh_to_Jab(jch)
+a = cm_jpapbp[:, 1]
+b = cm_jpapbp[:, 2]
+
+# ab 곡선을 등분
+a_diff = np.diff(a)
+b_diff = np.diff(b)
+
+len_ab = np.hypot(a_diff, b_diff)
+cumsum_len = np.cumsum(len_ab)
+sum_len = cumsum_len[-1]
+
+POINTS = 1024
+last = 0
+cdx = 0  # index of coordinate
+idx_sel = []
+for idx in range(len(cumsum_len)):
+    length = sum_len * cdx / POINTS
+    if last <= length < cumsum_len[idx]:
+        if length - last < cumsum_len[idx] - length:
+            idx_sel.append(idx)
+        else:
+            idx_sel.append(idx+1)
+
+        cdx += 1
+
+    if POINTS <= cdx:
+        break
+
+# J 재정의, 등분한 ab 합치기
+j_ = np.linspace(0.1, 99, len(idx_sel))
+cm_jpapbp = np.stack([j_, a[idx_sel], b[idx_sel]], axis=-1)
 
 cm_rgb = cam16_to_srgb(cm_jpapbp)
 cm_data = np.clip(cm_rgb, 0, 1)
@@ -160,7 +193,7 @@ plt.plot(cm255[:,1], 'g')
 plt.plot(cm255[:,2], 'b')
 plt.plot(np.mean(cm255, axis=1))
 
-ax.set_xticks(np.linspace(0, J_RES, seg_simple+1, endpoint=True))
+ax.set_xticks(np.linspace(0, len(cm_data), seg_simple+1, endpoint=True))
 ax.set_yticks(np.arange(0, 257, 16))
 
 ax.grid(which='both')
@@ -173,6 +206,7 @@ cm_data_u8 = (cm_data*255 + 0.5).astype('uint8')
 cm_selected = cm_rgb*0.8 + 0.3
 cm_selected_u8 = (np.clip(cm_selected, 0, 1)*255 + 0.5).astype('uint8')
 
+cm_data_JCh = colour.models.Jab_to_JCh(cm_jpapbp)
 cm_data_JCh[..., 0] += 20   # Boost lightness
 cm_data_JCh[..., 1] += 5   # Boost chroma
 cm_data_JCh[..., 2] += 90   # Change hue
