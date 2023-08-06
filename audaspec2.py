@@ -12,67 +12,66 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
 
-RES = 100000
+RES = 2 ** 20
 POINTS = 256
 
 
-def gen_colormap(hue_range=(-110, 115)):
-    J_MIN = 3
-    J_MAX = 98
-
+def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(3, 97), plots=False):
     rx = np.linspace(0, 1, RES)
 
-    # Smooth square wave https://dsp.stackexchange.com/a/56529
-    # delta = 1
-    # r = 1 / np.arctan(1/delta) * np.arctan(np.sin(np.pi * rx) / delta)
+    if chroma_shape == 'square':
+        # https://dsp.stackexchange.com/a/56529
+        delta = 0.2
+        c = 1 / np.arctan(1/delta) * np.arctan(np.sin(np.pi * rx) / delta)
 
-    # Sine
-    # r = np.sin(np.pi * rx)
+    elif chroma_shape == 'sin':
+        c = np.sin(np.pi * rx)
 
-    # Half circle
-    r = np.sqrt(1 - (1 - 2*rx) * (1 - 2*rx))
+    elif chroma_shape == 'circle':
+        c = np.sqrt(1 - (1 - 2*rx) * (1 - 2*rx))
 
-    # plt.plot(r)
+    # if plots:
+    #     plt.plot(c)
 
-    # blue to yellow -77 ~ 111
-    # AudaSpec1 = -180 ~ 135
     h = np.linspace(hue_range[0], hue_range[1], RES)
     h_rad = np.radians(h)
 
-    a = r * np.cos(h_rad)
-    b = r * np.sin(h_rad)
+    # get ab arc
+    a = c * np.cos(h_rad)
+    b = c * np.sin(h_rad)
 
-    plt.figure()
-    plt.plot(a, b)
-    plt.axis('equal')
+    # if plots:
+    #     plt.figure()
+    #     plt.plot(a, b)
+    #     plt.axis('equal')
 
-    a_diff = np.diff(a)
-    b_diff = np.diff(b)
+    # differentiate ab arc
+    diff_ab = np.hypot(np.diff(a), np.diff(b))
+    cumsum_ab = np.cumsum(diff_ab)
+    sum_len = cumsum_ab[-1]
 
-    len_ab = np.hypot(a_diff, b_diff)
-    cumsum_len = np.cumsum(len_ab)
-    sum_len = cumsum_len[-1]
-
-    last = 0
-    cdx = 0  # index of coordinate
+    last_cumsum = 0
     idx_sel = []
-    for idx in range(len(cumsum_len)):
+    idx = 0
+    for cdx in range(POINTS):
         length = sum_len * cdx / POINTS
-        if last <= length < cumsum_len[idx]:
-            if length - last < cumsum_len[idx] - length:
-                idx_sel.append(idx)
-            else:
-                idx_sel.append(idx+1)
+        while True:
+            cumsum = cumsum_ab[idx]
+            if last_cumsum <= length < cumsum:
+                break
+            idx += 1
 
-            cdx += 1
+        if length - last_cumsum < cumsum - length:
+            idx_sel.append(idx)
+        else:
+            idx_sel.append(idx+1)
 
-        if POINTS <= cdx:
-            break
+    j = np.linspace(lightness_range[0], lightness_range[1], POINTS)
 
-    j = np.linspace(J_MIN, J_MAX, len(idx_sel))
-
-    for c_mul in np.arange(40, 20, -0.1):
-        c_ = r[idx_sel] * c_mul
+    for c_mul in np.arange(45, 0, -0.1):
+        if c_mul < 20:
+            return None, sum_len * c_mul * (lightness_range[1] - lightness_range[0])
+        c_ = c[idx_sel] * c_mul
         h_ = h[idx_sel]
         jch = np.stack([j, c_, h_], axis=-1)
 
@@ -84,18 +83,60 @@ def gen_colormap(hue_range=(-110, 115)):
         if 0 <= np.min(color_rgb) and np.max(color_rgb) <= 1:
             break
 
-    len_arc = sum_len * c_mul * (J_MAX - J_MIN)
-    print(len_arc)
+    arc_len = sum_len * c_mul * (lightness_range[1] - lightness_range[0])
 
-    # plt.figure()
-    # plt.plot(c_)
-    # plt.plot(h_)
+    if plots:
+        print(c_mul)
+        print(arc_len)
+    
+        # plt.figure()
+        # plt.plot(c_)
+        # plt.plot(h_)
 
-    return color_rgb, len_arc
+    return color_rgb, arc_len * c_mul
 
 
 if __name__ == "__main__":
-    color_rgb, _ = gen_colormap()
+    # hue range
+    # blue to yellow -77, 111
+    # AudaSpec1 = -180, 135
+
+    # red~magenta
+    # color_rgb, _ = gen_colormap(hue_range=(50,  -70), chroma_shape='circle', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[45, -65], chroma_shape='square', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[75, -105], chroma_shape='sin', plots=True)
+
+    # red blue
+    # color_rgb, _ = gen_colormap(hue_range=[55, -175], chroma_shape='square', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[100, -230], chroma_shape='sin', plots=True)
+
+    # brown, purple, cyan, light green
+    # color_rgb, _ = gen_colormap(hue_range=(100, -230), chroma_shape='sin', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=(60, -190), chroma_shape='circle', plots=True)
+
+    # brown, purble, blue, light green, light yellow
+    # color_rgb, _ = gen_colormap(hue_range=(80, -270), chroma_shape='circle', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=(75, -295), chroma_shape='square', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[175, -425], chroma_shape='sin', plots=True)
+
+    # rainbow
+    # color_rgb, _ = gen_colormap(hue_range=(90, -450), chroma_shape='square', plots=True)
+
+    # blue, pink
+    # color_rgb, _ = gen_colormap(hue_range=(-100, 20), chroma_shape='circle', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[-95, 5], chroma_shape='square', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[-125, 45], chroma_shape='sin', plots=True)
+
+    # blue, magenta, orange, yellow
+    # color_rgb, _ = gen_colormap(hue_range=(-110, 110), lightness_range=(3, 98), chroma_shape='circle', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[-95, 95], lightness_range=(3, 98), chroma_shape='square', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[-140, 150], lightness_range=(3, 98), chroma_shape='sin', plots=True)
+
+    # color_rgb, _ = gen_colormap(hue_range=(-115, 100), lightness_range=(3, 98), chroma_shape='circle', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[-100, 85], lightness_range=(3, 98), chroma_shape='square', plots=True)
+    color_rgb, _ = gen_colormap(hue_range=[-150, 135], lightness_range=(3, 98), chroma_shape='sin', plots=True)
+
+
     cm_data = np.clip(color_rgb, 0, 1)
 
     test_cm = ListedColormap(cm_data, name='AudaSpec2')
@@ -108,3 +149,17 @@ if __name__ == "__main__":
         plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto', cmap=test_cm)
 
     rgbs = (color_rgb*255).round().clip(0, 255).astype('uint8')
+
+    seg_simple = 8
+
+    fix, ax = plt.subplots()
+    plt.plot(rgbs[:,0], 'r')
+    plt.plot(rgbs[:,1], 'g')
+    plt.plot(rgbs[:,2], 'b')
+    plt.plot(np.mean(rgbs, axis=1))
+
+    ax.set_xticks(np.linspace(0, len(cm_data), seg_simple+1, endpoint=True))
+    ax.set_yticks(np.arange(0, 257, 16))
+
+    ax.grid(which='both')
+    plt.show()
