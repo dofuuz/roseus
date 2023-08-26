@@ -17,7 +17,7 @@ from roseus import gen_colormap
 def batch_colormap(tasks):
     results = []
     for task in tasks:
-        _, score = gen_colormap(task)
+        _, score = gen_colormap(task, lightness_range=(3, 97))
         results.append(score)
     return results
 
@@ -152,4 +152,3 @@ if __name__ == '__main__':
 # [90, 210]: 206164.40625
 # [145, 705]: 379349.03125
 # [155, 675]: 380382.5625
-
