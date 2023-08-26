@@ -16,7 +16,7 @@ RES = 2 ** 20
 POINTS = 256
 
 
-def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(3, 97), plots=False):
+def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(3, 98), plots=False):
     rx = np.linspace(0, 1, RES)
 
     if chroma_shape == 'square':
@@ -68,6 +68,7 @@ def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(
 
     j = np.linspace(lightness_range[0], lightness_range[1], POINTS)
 
+    # desaturate into sRGB gamut
     for c_mul in np.arange(45, 0, -0.1):
         if c_mul < 20:
             return None, sum_len * c_mul * (lightness_range[1] - lightness_range[0])
@@ -128,13 +129,13 @@ if __name__ == "__main__":
     # color_rgb, _ = gen_colormap(hue_range=[-125, 45], chroma_shape='sin', plots=True)
 
     # blue, magenta, orange, yellow
-    # color_rgb, _ = gen_colormap(hue_range=(-110, 110), lightness_range=(3, 98), chroma_shape='circle', plots=True)
+    color_rgb, _ = gen_colormap(hue_range=(-110, 115), lightness_range=(3, 98), chroma_shape='circle', plots=True)
     # color_rgb, _ = gen_colormap(hue_range=[-95, 95], lightness_range=(3, 98), chroma_shape='square', plots=True)
     # color_rgb, _ = gen_colormap(hue_range=[-140, 150], lightness_range=(3, 98), chroma_shape='sin', plots=True)
 
     # color_rgb, _ = gen_colormap(hue_range=(-115, 100), lightness_range=(3, 98), chroma_shape='circle', plots=True)
     # color_rgb, _ = gen_colormap(hue_range=[-100, 85], lightness_range=(3, 98), chroma_shape='square', plots=True)
-    color_rgb, _ = gen_colormap(hue_range=[-150, 135], lightness_range=(3, 98), chroma_shape='sin', plots=True)
+    # color_rgb, _ = gen_colormap(hue_range=[-150, 135], lightness_range=(3, 98), chroma_shape='sin', plots=True)
 
 
     cm_data = np.clip(color_rgb, 0, 1)

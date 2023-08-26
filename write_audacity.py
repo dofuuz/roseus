@@ -33,7 +33,7 @@ def srgb_to_cam16(rgb):
     return jab
 
 
-cm_data, _ = gen_colormap(hue_range=(-115, 100), lightness_range=(3, 98), chroma_shape='circle', plots=True)
+cm_data, _ = gen_colormap()
 
 # Generate uint8 format colormaps
 cm_data_u8 = (cm_data*255 + 0.5).astype('uint8')
@@ -51,7 +51,7 @@ cm_sel_freq = cam16_to_srgb(cm_data_jab)
 cm_sel_freq_u8 = (np.clip(cm_sel_freq, 0, 1)*255 + 0.5).astype('uint8')
 
 # Save colormaps to C format
-with open('AColorResources.h', 'wt') as ofile:
+with open('generated/AColorResources.h', 'wt') as ofile:
     ofile.write('const unsigned char specColormap[%d][3] = {\n' % J_RES)
     for r, g, b in cm_data_u8:
         ofile.write('   {%3d, %3d, %3d},\n' % (r, g, b))
