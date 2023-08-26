@@ -103,51 +103,47 @@ if __name__ == "__main__":
     # AudaSpec1 = -180, 135
 
     # red~magenta
-    # color_rgb, _ = gen_colormap(hue_range=(50,  -70), chroma_shape='circle', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[45, -65], chroma_shape='square', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[75, -105], chroma_shape='sin', plots=True)
+    # color_rgb, _ = gen_colormap([50, -70], 'circle', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([45, -65], 'square', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([75, -105], 'sin', (3, 97), plots=True)
 
     # red blue
-    # color_rgb, _ = gen_colormap(hue_range=[55, -175], chroma_shape='square', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[100, -230], chroma_shape='sin', plots=True)
+    # color_rgb, _ = gen_colormap([55, -175], 'square', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([100, -230], 'sin', (3, 97), plots=True)
 
     # brown, purple, cyan, light green
-    # color_rgb, _ = gen_colormap(hue_range=(100, -230), chroma_shape='sin', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=(60, -190), chroma_shape='circle', plots=True)
+    # color_rgb, _ = gen_colormap([100, -230], 'sin', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([60, -190], 'circle', (3, 97), plots=True)
 
     # brown, purble, blue, light green, light yellow
-    # color_rgb, _ = gen_colormap(hue_range=(80, -270), chroma_shape='circle', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=(75, -295), chroma_shape='square', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[175, -425], chroma_shape='sin', plots=True)
+    # color_rgb, _ = gen_colormap([80, -270], 'circle', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([75, -295], 'square', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([175, -425], 'sin', (3, 97), plots=True)
 
     # rainbow
-    # color_rgb, _ = gen_colormap(hue_range=(90, -450), chroma_shape='square', plots=True)
+    # color_rgb, _ = gen_colormap((90, -450), 'square', lightness_range=(3, 99), plots=True)
 
     # blue, pink
-    # color_rgb, _ = gen_colormap(hue_range=(-100, 20), chroma_shape='circle', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[-95, 5], chroma_shape='square', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[-125, 45], chroma_shape='sin', plots=True)
+    # color_rgb, _ = gen_colormap((-100, 20), 'circle', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([-95, 5], 'square', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([-125, 45], 'sin', (3, 97), plots=True)
 
     # blue, magenta, orange, yellow
-    color_rgb, _ = gen_colormap(hue_range=(-110, 115), lightness_range=(3, 98), chroma_shape='circle', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[-95, 95], lightness_range=(3, 98), chroma_shape='square', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[-140, 150], lightness_range=(3, 98), chroma_shape='sin', plots=True)
+    color_rgb, _ = gen_colormap((-110, 115), 'circle', lightness_range=(3, 98), plots=True)
+    # color_rgb, _ = gen_colormap([-95, 95], 'square', lightness_range=(3, 98), plots=True)
+    # color_rgb, _ = gen_colormap([-140, 150], 'sin', lightness_range=(3, 99), plots=True)
+    # color_rgb, _ = gen_colormap([-138, 151], 'sin', lightness_range=(1, 99), plots=True)
 
-    # color_rgb, _ = gen_colormap(hue_range=(-115, 100), lightness_range=(3, 98), chroma_shape='circle', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[-100, 85], lightness_range=(3, 98), chroma_shape='square', plots=True)
-    # color_rgb, _ = gen_colormap(hue_range=[-150, 135], lightness_range=(3, 98), chroma_shape='sin', plots=True)
-
+    # color_rgb, _ = gen_colormap((-115, 100), 'circle', lightness_range=(3, 98), plots=True)
+    # color_rgb, _ = gen_colormap([-100, 85], 'square', lightness_range=(1, 97), plots=True)
+    # color_rgb, _ = gen_colormap([-150, 135], 'sin', lightness_range=(3, 99), plots=True)
 
     cm_data = np.clip(color_rgb, 0, 1)
 
     test_cm = ListedColormap(cm_data, name='Roseus')
-    try:
-        from viscm import viscm
-        viscm(test_cm)
-    except ImportError:
-        print("viscm not found, falling back on simple display")
-        plt.figure()
-        plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto', cmap=test_cm)
+
+    from viscm_cam16ucs import viscm
+    viscm(test_cm)
 
     rgbs = (color_rgb*255).round().clip(0, 255).astype('uint8')
 
