@@ -1,3 +1,16 @@
+/**********************************************************************
+
+  Audacity: A Digital Audio Editor
+
+  @file AColorResources.h
+  @brief RGB data of 'Color (New)' spectrogram color scheme
+
+  Roseus colormap from
+  https://github.com/dofuuz/audacity-colormap
+
+**********************************************************************/
+
+
 const unsigned char specColormap[256][3] = {
    {  2,   2,   2},
    {  3,   3,   3},

@@ -1,4 +1,4 @@
-from audaspec2 import gen_colormap
+from roseus import gen_colormap
 
 
 HEAD = '''# Roseus colormap data

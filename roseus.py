@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     cm_data = np.clip(color_rgb, 0, 1)
 
-    test_cm = ListedColormap(cm_data, name='AudaSpec2')
+    test_cm = ListedColormap(cm_data, name='Roseus')
     try:
         from viscm import viscm
         viscm(test_cm)

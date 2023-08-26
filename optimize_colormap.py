@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.ndimage import maximum_filter
 
-from audaspec2 import gen_colormap
+from roseus import gen_colormap
 
 
 def batch_colormap(tasks):
