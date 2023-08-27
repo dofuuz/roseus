@@ -30,20 +30,12 @@ def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(
     elif chroma_shape == 'circle':
         c = np.sqrt(1 - (1 - 2*rx) * (1 - 2*rx))
 
-    # if plots:
-    #     plt.plot(c)
-
     h = np.linspace(hue_range[0], hue_range[1], RES)
     h_rad = np.radians(h)
 
     # get ab arc
     a = c * np.cos(h_rad)
     b = c * np.sin(h_rad)
-
-    # if plots:
-    #     plt.figure()
-    #     plt.plot(a, b)
-    #     plt.axis('equal')
 
     # differentiate ab arc
     diff_ab = np.hypot(np.diff(a), np.diff(b))
@@ -89,15 +81,66 @@ def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(
     if plots:
         print(c_mul)
         print(arc_len)
-    
-        # plt.figure()
-        # plt.plot(c_)
-        # plt.plot(h_)
+
+    if plots == 'verbose':
+        # plot J, C, h
+        plt.figure(figsize=(6.4, 2.4))
+
+        ax = plt.subplot(131)
+        ax.plot(j)
+        ax.set_title('Lightness')
+        ax.get_xaxis().set_visible(False)
+
+        ax = plt.subplot(132)
+        ax.plot(c_)
+        ax.set_title('Chroma')
+        ax.get_xaxis().set_visible(False)
+
+        ax = plt.subplot(133)
+        ax.plot(h_)
+        ax.set_title('Hue')
+        ax.get_xaxis().set_visible(False)
+
+        plt.show()
+
+        # CAM16 Jab colorspace
+        ac = np.linspace(-45, 45, 1000)
+        bc = np.linspace(-35, 35, 1000)
+        ac, bc = np.meshgrid(ac, bc)
+        phi = np.degrees(np.arctan2(bc, ac))
+
+        jc = np.searchsorted(h_, phi) / POINTS * (lightness_range[1] - lightness_range[0]) + lightness_range[0]
+
+        xyzs = colour.CAM16UCS_to_XYZ(np.stack([jc, ac, bc], axis=-1))
+        rgbs = colour.XYZ_to_sRGB(xyzs)
+
+        # get sRGB gamut
+        r = rgbs[..., 0]
+        g = rgbs[..., 1]
+        b = rgbs[..., 2]
+        clipped = np.any([r<0, g<0, b<0, 1<r, 1<g, 1<b], axis=0)
+        clipped = np.stack([clipped, clipped, clipped], axis=-1)
+
+        rgbs[clipped] = 0.4426
+
+        # plot gamut
+        ax = plt.subplot()
+        ax.plot(jab[..., 1], jab[..., 2])
+        ax.axis('equal')
+
+        ax.imshow(rgbs, extent=[ac.min(), ac.max(), bc.max(), bc.min()])
+        ax.invert_yaxis()
+        ax.set_title('sRGB color gamut in CAM16-UCS')
+        ax.set_xlabel("a' (green → red)")
+        ax.set_ylabel("b' (blue → yellow)")
+        plt.show()
 
     return color_rgb, arc_len * c_mul
 
 
 if __name__ == "__main__":
+    plt.rcParams['figure.autolayout'] = True
+
     # hue range
     # blue to yellow -77, 111
     # AudaSpec1 = -180, 135
@@ -154,7 +197,9 @@ if __name__ == "__main__":
     plt.plot(rgbs[:,1], 'g')
     plt.plot(rgbs[:,2], 'b')
     plt.plot(np.mean(rgbs, axis=1))
+    plt.title('R, G, B and mean(RGB)')
 
+    ax.tick_params(labelbottom=False)
     ax.set_xticks(np.linspace(0, len(cm_data), seg_simple+1, endpoint=True))
     ax.set_yticks(np.arange(0, 257, 16))
 
