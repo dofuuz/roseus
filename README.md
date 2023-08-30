@@ -32,6 +32,12 @@ Considerings while making the new colormap (in order of priority):
 - Originality, keep magenta-ish feeling
 - Pretty
 
+![roseus-lch](img/roseus-lch.png)
+
+![roseus-gamut](img/roseus-gamut.png)
+
+![roseus-rgb](img/roseus-rgb.png)
+
 
 ## Changes from the previous version
 
