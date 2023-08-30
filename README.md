@@ -21,7 +21,8 @@ https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html
 
 ## The new colormap
 
-(viscm screenshot here)
+![viscm-roseus](img/viscm-roseus.png)
+
 Note: [viscm](https://github.com/matplotlib/viscm) used in measurements has been modified to target CAM16-UCS instead of CAM02-UCS.
 
 Considerings while making the new colormap (in order of priority):
@@ -39,4 +40,5 @@ The colormap is named 'Roseus'. (inspiration from Viridis)
 Roseus now targets CAM16-UCS color space instead of the obsolute CAM02-UCS.
 
 ![viscm-audaspec](img/viscm-audaspec.png)
+
 The previous version was perceptually smooth, but not perceptually uniform. It's now perceptually uniform.
