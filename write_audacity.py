@@ -56,7 +56,7 @@ HEAD = '''/*********************************************************************
   Audacity: A Digital Audio Editor
 
   @file AColorResources.h
-  @brief RGB data of 'Color (New)' spectrogram color scheme
+  @brief RGB data of 'Color (default)' spectrogram color scheme
 
   Roseus colormap from
   https://github.com/dofuuz/audacity-colormap

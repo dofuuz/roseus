@@ -14,13 +14,13 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import numpy as np
 
-    auda_cm = ListedColormap(roseus_data, name='Roseus')
-    plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto', cmap=auda_cm)
+    rose_cm = ListedColormap(roseus_data, name='Roseus')
+    plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto', cmap=rose_cm)
     plt.show()
 '''
 
 
-with open('generated/colormap_dof.py', 'w') as f:
+with open('generated/roseus_matplotlib.py', 'w') as f:
     color_data, _ = gen_colormap()
 
     f.write(HEAD)

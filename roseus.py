@@ -14,9 +14,10 @@ from matplotlib.colors import ListedColormap
 
 RES = 2 ** 20
 POINTS = 256
+PLOTS = 'verbose'
 
 
-def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(3, 98), plots=False):
+def gen_colormap(hue_range=(-185, 170), chroma_shape='cos', lightness_range=(2, 99), plots=False):
     rx = np.linspace(0, 1, RES)
 
     if chroma_shape == 'square':
@@ -29,6 +30,9 @@ def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(
 
     elif chroma_shape == 'circle':
         c = np.sqrt(1 - (1 - 2*rx) * (1 - 2*rx))
+
+    elif chroma_shape == 'cos':  # cardioid
+        c = (1 - np.cos(2 * np.pi * rx)) / 2
 
     h = np.linspace(hue_range[0], hue_range[1], RES)
     h_rad = np.radians(h)
@@ -84,22 +88,38 @@ def gen_colormap(hue_range=(-110, 115), chroma_shape='circle', lightness_range=(
 
     if plots == 'verbose':
         # plot J, C, h
-        plt.figure(figsize=(6.4, 2.4))
+        plt.figure(figsize=(6.4, 3.6))
 
-        ax = plt.subplot(131)
+        ax = plt.subplot(231)
         ax.plot(j)
         ax.set_title('Lightness')
         ax.get_xaxis().set_visible(False)
 
-        ax = plt.subplot(132)
+        ax = plt.subplot(232)
         ax.plot(c_)
         ax.set_title('Chroma')
         ax.get_xaxis().set_visible(False)
 
-        ax = plt.subplot(133)
+        ax = plt.subplot(233)
         ax.plot(h_)
         ax.set_title('Hue')
         ax.get_xaxis().set_visible(False)
+
+        ax = plt.subplot(234)
+        ax.plot(np.diff(j).astype(np.float32))
+        ax.set_title('ΔLightness')
+        ax.get_xaxis().set_visible(False)
+
+        ax = plt.subplot(235)
+        ax.plot(np.diff(c_))
+        ax.set_title('ΔChroma')
+        ax.get_xaxis().set_visible(False)
+
+        ax = plt.subplot(236)
+        ax.plot(np.diff(h_[1:]))
+        ax.set_title('ΔHue')
+        ax.get_xaxis().set_visible(False)
+
 
         plt.show()
 
@@ -172,10 +192,15 @@ if __name__ == "__main__":
     # color_rgb, _ = gen_colormap([-125, 45], 'sin', (3, 97), plots=True)
 
     # blue, magenta, orange, yellow
-    color_rgb, _ = gen_colormap((-110, 115), 'circle', lightness_range=(3, 98), plots=True)
-    # color_rgb, _ = gen_colormap([-95, 95], 'square', lightness_range=(3, 98), plots=True)
-    # color_rgb, _ = gen_colormap([-140, 150], 'sin', lightness_range=(3, 99), plots=True)
-    # color_rgb, _ = gen_colormap([-138, 151], 'sin', lightness_range=(1, 99), plots=True)
+    # color_rgb, _ = gen_colormap((-109, 115), 'circle', lightness_range=(2, 98), plots=PLOTS)  # optimal
+    # color_rgb, _ = gen_colormap((-114, 108), 'circle', lightness_range=(2, 98), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-95, 95], 'square', lightness_range=(3, 98), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-105, 95], 'square', lightness_range=(2, 98.5), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-139, 138], 'sin', lightness_range=(2, 99), plots=PLOTS)  # optimal
+    # color_rgb, _ = gen_colormap([-144, 138], 'sin', lightness_range=(2, 99), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-150, 135], 'sin', lightness_range=(5, 99), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-185, 189], 'cos', lightness_range=(2, 99), plots=PLOTS)  # optimal
+    color_rgb, _ = gen_colormap([-185, 170], 'cos', lightness_range=(2, 99), plots=PLOTS)
 
     # color_rgb, _ = gen_colormap((-115, 100), 'circle', lightness_range=(3, 98), plots=True)
     # color_rgb, _ = gen_colormap([-100, 85], 'square', lightness_range=(1, 97), plots=True)
