@@ -6,7 +6,7 @@
   @brief RGB data of 'Color (default)' spectrogram color scheme
 
   Roseus colormap from
-  https://github.com/dofuuz/audacity-colormap
+  https://github.com/dofuuz/roseus
 
 **********************************************************************/
 

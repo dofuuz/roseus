@@ -1,5 +1,5 @@
 # Roseus colormap data
-# https://github.com/dofuuz/audacity-colormap
+# https://github.com/dofuuz/roseus
 
 roseus_data = [
     [0.004528, 0.004341, 0.004307],

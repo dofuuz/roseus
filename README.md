@@ -12,7 +12,7 @@ A perceptually uniform colormap with **full range of lightness**.
 
 ## Motivation
 
-The [previous version](https://github.com/dofuuz/audacity-colormap/tree/v1.0.0) of this colormap was developed for Audacity spectrogram. Roseus has now become perceptually uniform and aims to be used in a wider range of fields.
+The [previous version](https://github.com/dofuuz/roseus/tree/v0.1.0) of this colormap was developed for Audacity spectrogram. Roseus has now become perceptually uniform and aims to be used in a wider range of fields.
 
 Further readings about perceptually uniform colormaps:  
 https://bids.github.io/colormap/  
@@ -41,7 +41,7 @@ Considerings while making the new colormap (in order of priority):
 
 ## Changes from the previous version
 
-Previous version: [code](https://github.com/dofuuz/audacity-colormap/tree/v1.0.0) | [viscm](img/viscm-audaspec.png) | [spectrogram](img/audacity-audaspec1.png)
+Previous version: [code](https://github.com/dofuuz/roseus/tree/v0.1.0) | [viscm](img/viscm-audaspec.png) | [spectrogram](img/audacity-audaspec1.png)
 
 - It was perceptually smooth, but wasn't perceptually uniform. Now it is.
 - Roseus now targets CAM16-UCS color space instead of the obsolute CAM02-UCS.

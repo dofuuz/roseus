@@ -2,7 +2,7 @@ from roseus import gen_colormap
 
 
 HEAD = '''# Roseus colormap data
-# https://github.com/dofuuz/audacity-colormap
+# https://github.com/dofuuz/roseus
 
 roseus_data = [
 '''
