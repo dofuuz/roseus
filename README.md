@@ -5,9 +5,9 @@ A perceptually uniform colormap with **full range of lightness**.
 
 ## Preview
 
-(Colorbar image here)
+![roseus-bar](img/roseus-bar.png)
 
-(Audacity spectrogram image here)
+![audacity-roseus](img/audacity-roseus.png)
 
 
 ## Motivation
@@ -32,19 +32,26 @@ Considerings while making the new colormap (in order of priority):
 - Originality, keep magenta-ish feeling
 - Pretty
 
-![roseus-lch](img/roseus-lch.png)
-
 ![roseus-gamut](img/roseus-gamut.png)
+
+![roseus-lch](img/roseus-lch.png)
 
 ![roseus-rgb](img/roseus-rgb.png)
 
 
 ## Changes from the previous version
 
-The colormap is named 'Roseus'. (inspiration from Viridis)
+Previous version: [code](https://github.com/dofuuz/audacity-colormap/tree/v1.0.0) | [viscm](img/viscm-audaspec.png) | [spectrogram](img/audacity-audaspec1.png)
 
-Roseus now targets CAM16-UCS color space instead of the obsolute CAM02-UCS.
+- It was perceptually smooth, but wasn't perceptually uniform. Now it is.
+- Roseus now targets CAM16-UCS color space instead of the obsolute CAM02-UCS.
+- The colormap is named 'Roseus'. (inspiration from Viridis)
 
-![viscm-audaspec](img/viscm-audaspec.png)
 
-The previous version was perceptually smooth, but not perceptually uniform. It's now perceptually uniform.
+## Findings and candiates
+
+These are some colormaps made during designing Roseus. They are all perceptually uniform and has almost full range of lightness.
+
+You can generate them using `roseus.py`.
+
+![cmap-findings](img/cmap-findings.png)
