@@ -41,6 +41,7 @@ CMAP_SETTINGS = [
     [[-125, 45], 'sin', (3, 97)],
 
     # blue, magenta, orange, yellow
+    [[-180, 135], 'cos', (2, 98)],
     [[-109, 115], 'circle', (2, 98)],  # optimal
     [[-114, 108], 'circle', (2, 98)],
     [[-95, 95], 'square', (3, 98)],
@@ -65,7 +66,7 @@ for h, C, L in CMAP_SETTINGS:
     cm = mpl.colors.ListedColormap(cm_data, name=f'{L} {C} {h}')
     cmap_list.append(cm)
 
-# cmap_list.append(mpl.colors.ListedColormap(audaspec_data, name='AudaSpec v1'))
+# cmap_list.append(mpl.colors.ListedColormap(audaspec_data, name='v0.1'))
 cmap_list.append(mpl.colors.ListedColormap(gen_colormap()[0], name='Roseus'))
 
 # Create figure and adjust figure height to number of colormaps

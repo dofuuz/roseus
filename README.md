@@ -50,7 +50,7 @@ Previous version: [code](https://github.com/dofuuz/roseus/tree/v0.1.0) | [viscm]
 
 ## Findings and candiates
 
-These are some colormaps made during designing Roseus. They are all perceptually uniform and has almost full range of lightness.
+These are some colormaps made during designing Roseus. They are all perceptually uniform(except v0.1) and has almost full range of lightness.
 
 You can generate them using `roseus.py`.
 
