@@ -10,7 +10,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from roseus import gen_colormap
-# from gen_wheel import cm_data as audaspec_data
+from gen_old import cm_data as audaspec_data
 
 
 CMAP_SETTINGS = [
@@ -66,7 +66,7 @@ for h, C, L in CMAP_SETTINGS:
     cm = mpl.colors.ListedColormap(cm_data, name=f'{L} {C} {h}')
     cmap_list.append(cm)
 
-# cmap_list.append(mpl.colors.ListedColormap(audaspec_data, name='v0.1'))
+cmap_list.append(mpl.colors.ListedColormap(audaspec_data, name='v0.1'))
 cmap_list.append(mpl.colors.ListedColormap(gen_colormap()[0], name='Roseus'))
 
 # Create figure and adjust figure height to number of colormaps
@@ -74,7 +74,7 @@ nrows = len(cmap_list)
 figh = 0.35 + 0.15 + (nrows + (nrows - 1) * 0.1) * 0.22  # + 0.2
 fig, axs = plt.subplots(nrows=nrows + 1, figsize=(6.4, figh))
 fig.subplots_adjust(top=1 - 0.35 / figh, bottom=0.15 / figh,
-                    left=0.2, right=0.99)
+                    left=0.3, right=0.99)
 axs[0].set_title('Findings and candiates', fontsize=14)
 
 for ax, cmap in zip(axs, cmap_list):

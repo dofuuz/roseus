@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Aug  4 15:15:42 2023
+Roseus colormap generator
+https://github.com/dofuuz/roseus
 
-@author: kt
+Roseus: A perceptually uniform colormap with full range of lightness
 """
 
 import colour
@@ -201,6 +202,7 @@ if __name__ == "__main__":
     # color_rgb, _ = gen_colormap([-150, 135], 'sin', lightness_range=(5, 99), plots=PLOTS)
     # color_rgb, _ = gen_colormap([-185, 189], 'cos', lightness_range=(2, 99), plots=PLOTS)  # optimal
     color_rgb, _ = gen_colormap([-185, 170], 'cos', lightness_range=(2, 99), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-180, 160], 'cos', lightness_range=(2, 99), plots=PLOTS)
 
     # color_rgb, _ = gen_colormap((-115, 100), 'circle', lightness_range=(3, 98), plots=True)
     # color_rgb, _ = gen_colormap([-100, 85], 'square', lightness_range=(1, 97), plots=True)

@@ -39,9 +39,9 @@ Considerings while making the new colormap (in order of priority):
 ![roseus-rgb](img/roseus-rgb.png)
 
 
-## Changes from the previous version
+## Changes from the previous version(v0.1)
 
-Previous version: [code](https://github.com/dofuuz/roseus/tree/v0.1.0) | [viscm](img/viscm-audaspec.png) | [spectrogram](img/audacity-audaspec1.png)
+v0.1: [code](https://github.com/dofuuz/roseus/tree/v0.1.0) | [viscm](img/viscm-audaspec.png) | [spectrogram](img/audacity-audaspec1.png)
 
 - It was perceptually smooth, but wasn't perceptually uniform. Now it is.
 - Roseus now targets CAM16-UCS color space instead of the obsolute CAM02-UCS.
