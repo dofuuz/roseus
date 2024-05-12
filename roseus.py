@@ -167,46 +167,54 @@ if __name__ == "__main__":
     # AudaSpec1 = -180, 135
 
     # red~magenta
-    # color_rgb, _ = gen_colormap([50, -70], 'circle', (3, 97), plots=True)
-    # color_rgb, _ = gen_colormap([45, -65], 'square', (3, 97), plots=True)
-    # color_rgb, _ = gen_colormap([75, -105], 'sin', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([50, -70], 'circle', (3, 97), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([45, -65], 'square', (3, 97), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([75, -105], 'sin', (1, 99), plots=PLOTS)  # v
+    # color_rgb, _ = gen_colormap([105, -140], 'cos', (1, 98.5), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([125, -180], 'cos', (2, 98.5), plots=PLOTS)
 
     # red blue
-    # color_rgb, _ = gen_colormap([55, -175], 'square', (3, 97), plots=True)
-    # color_rgb, _ = gen_colormap([100, -230], 'sin', (3, 97), plots=True)
-
-    # brown, purple, cyan, light green
-    # color_rgb, _ = gen_colormap([100, -230], 'sin', (3, 97), plots=True)
-    # color_rgb, _ = gen_colormap([60, -190], 'circle', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([55, -175], 'square', (3, 97), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([95, -225], 'sin', (2, 99), plots=PLOTS)  # v
+    # color_rgb, _ = gen_colormap([110, -225], 'sin', (2, 99), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([60, -190], 'circle', (3, 97), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([145, -285], 'cos', (1, 98.5), plots=PLOTS)
 
     # brown, purble, blue, light green, light yellow
-    # color_rgb, _ = gen_colormap([80, -270], 'circle', (3, 97), plots=True)
-    # color_rgb, _ = gen_colormap([75, -295], 'square', (3, 97), plots=True)
-    # color_rgb, _ = gen_colormap([175, -425], 'sin', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap([80, -270], 'circle', (3, 97), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([75, -295], 'square', (2, 98.5), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([130, -320], 'sin', (2, 98.5), plots=PLOTS)  # v
+    # color_rgb, _ = gen_colormap([-180, -730], 'cos', (2, 98.5), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-170, -720], 'cos', (2, 98.5), plots=PLOTS)
 
     # rainbow
-    # color_rgb, _ = gen_colormap((90, -450), 'square', lightness_range=(3, 99), plots=True)
+    # color_rgb, _ = gen_colormap([175, -425], 'sin', (2, 98.5), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([190, -495], 'sin', (2, 99), plots=PLOTS)  # v
+    # color_rgb, _ = gen_colormap([-70, -945], 'cos', (2, 99), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-45, -945], 'cos', (2, 99), plots=PLOTS)
+    # color_rgb, _ = gen_colormap((90, -450), 'square', (3, 99), plots=PLOTS)
 
     # blue, pink
-    # color_rgb, _ = gen_colormap((-100, 20), 'circle', (3, 97), plots=True)
-    # color_rgb, _ = gen_colormap([-95, 5], 'square', (3, 97), plots=True)
-    # color_rgb, _ = gen_colormap([-125, 45], 'sin', (3, 97), plots=True)
+    # color_rgb, _ = gen_colormap((-100, 20), 'circle', (3, 97), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-95, 5], 'square', (3, 97), plots=PLOTS)
+    # color_rgb, _ = gen_colormap([-125, 45], 'sin', (2, 98.5), plots=PLOTS)  # v
+    # color_rgb, _ = gen_colormap([-155, 75], 'cos', (2, 98.5), plots=PLOTS)
 
     # blue, magenta, orange, yellow
-    # color_rgb, _ = gen_colormap((-109, 115), 'circle', lightness_range=(2, 98), plots=PLOTS)  # optimal
-    # color_rgb, _ = gen_colormap((-114, 108), 'circle', lightness_range=(2, 98), plots=PLOTS)
-    # color_rgb, _ = gen_colormap([-95, 95], 'square', lightness_range=(3, 98), plots=PLOTS)
-    # color_rgb, _ = gen_colormap([-105, 95], 'square', lightness_range=(2, 98.5), plots=PLOTS)
     # color_rgb, _ = gen_colormap([-139, 138], 'sin', lightness_range=(2, 99), plots=PLOTS)  # optimal
-    # color_rgb, _ = gen_colormap([-144, 138], 'sin', lightness_range=(2, 99), plots=PLOTS)
-    # color_rgb, _ = gen_colormap([-150, 135], 'sin', lightness_range=(5, 99), plots=PLOTS)
     # color_rgb, _ = gen_colormap([-185, 189], 'cos', lightness_range=(2, 99), plots=PLOTS)  # optimal
     color_rgb, _ = gen_colormap([-185, 170], 'cos', lightness_range=(2, 99), plots=PLOTS)
     # color_rgb, _ = gen_colormap([-180, 160], 'cos', lightness_range=(2, 99), plots=PLOTS)
 
-    # color_rgb, _ = gen_colormap((-115, 100), 'circle', lightness_range=(3, 98), plots=True)
-    # color_rgb, _ = gen_colormap([-100, 85], 'square', lightness_range=(1, 97), plots=True)
-    # color_rgb, _ = gen_colormap([-150, 135], 'sin', lightness_range=(3, 99), plots=True)
+    # color_rgb, _ = gen_colormap([10, -170], 'sin', (2, 99), plots=PLOTS)  # v
+
+    # color_rgb, _ = gen_colormap([210, 30], 'sin', (2, 98.5), plots=PLOTS)  # v
+    # color_rgb, _ = gen_colormap([-135, -335], 'cos', (2, 98.5), plots=PLOTS)
+
+    # color_rgb, _ = gen_colormap([-75, 105], 'sin', (2, 98), plots=PLOTS)
+
+    # color_rgb, _ = gen_colormap([70, 250], 'sin', (2, 99), plots=PLOTS)  # v
+    # color_rgb, _ = gen_colormap([45, 265], 'cos', (2, 99), plots=PLOTS)
 
     cm_data = np.clip(color_rgb, 0, 1)
 

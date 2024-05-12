@@ -10,50 +10,43 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from roseus import gen_colormap
-from gen_old import cm_data as audaspec_data
+# from gen_old import cm_data as audaspec_data
 
 
 CMAP_SETTINGS = [
     # red~magenta
-    [[50, -70], 'circle', (3, 97)],
-    [[45, -65], 'square', (3, 97)],
-    [[75, -105], 'sin', (3, 97)],
+    [[75, -105], 'sin', (1, 99)],
+    # [[125, -180], 'cos', (2, 98.5)],
+
+    # blue
+    [[10, -170], 'sin', (2, 99)],
 
     # red blue
-    [[55, -175], 'square', (3, 97)],
-    [[100, -230], 'sin', (3, 97)],
-
-    # brown, purple, cyan, light green
-    [[100, -230], 'sin', (3, 97)],
-    [[60, -190], 'circle', (3, 97)],
+    [[95, -225], 'sin', (2, 99)],
+    # [[145, -285], 'cos', (1, 98.5)],
 
     # brown, purble, blue, light green, light yellow
-    [[80, -270], 'circle', (3, 97)],
-    [[75, -295], 'square', (3, 97)],
-    [[175, -425], 'sin', (3, 97)],
+    # [[75, -295], 'square', (2, 98.5)],
+    [[130, -320], 'sin', (2, 98.5)],
+    # [[-180, -730], 'cos', (2, 98.5)],
 
     # rainbow
-    [[90, -450], 'square', (3, 99)],
+    # [[90, -450], 'square', (3, 99)],
+    # [[-70, -945], 'cos', (2, 99)],
+    [[190, -495], 'sin', (2, 99)],
+
+    # green yellow
+    # [[-135, -335], 'cos', (2, 98.5)],
+    # [[210, 25], 'sin', (2, 98.5)],
+    [[210, 30], 'sin', (2, 98.5)],
+
+    # green
+    [[70, 250], 'sin', (2, 99)],
+
 
     # blue, pink
-    [[-100, 20], 'circle', (3, 97)],
-    [[-95, 5], 'square', (3, 97)],
-    [[-125, 45], 'sin', (3, 97)],
-
-    # blue, magenta, orange, yellow
-    [[-180, 135], 'cos', (2, 98)],
-    [[-109, 115], 'circle', (2, 98)],  # optimal
-    [[-114, 108], 'circle', (2, 98)],
-    [[-95, 95], 'square', (3, 98)],
-    [[-105, 95], 'square', (2, 98.5)],
-    [[-139, 138], 'sin', (2, 99)],  # optimal
-    [[-144, 138], 'sin', (2, 99)],
-    [[-150, 135], 'sin', (5, 99)],
-    [[-185, 189], 'cos', (2, 99)],  # optimal
-
-    [[-115, 100], 'circle', (3, 98)],
-    [[-100, 85], 'square', (1, 97)],
-    [[-150, 135], 'sin', (3, 99)],
+    [[-125, 45], 'sin', (2, 98.5)],
+    # [[-155, 75], 'cos', (2, 98.5)],
 ]
 
 
@@ -66,7 +59,7 @@ for h, C, L in CMAP_SETTINGS:
     cm = mpl.colors.ListedColormap(cm_data, name=f'{L} {C} {h}')
     cmap_list.append(cm)
 
-cmap_list.append(mpl.colors.ListedColormap(audaspec_data, name='v0.1'))
+# cmap_list.append(mpl.colors.ListedColormap(audaspec_data, name='v0.1'))
 cmap_list.append(mpl.colors.ListedColormap(gen_colormap()[0], name='Roseus'))
 
 # Create figure and adjust figure height to number of colormaps
