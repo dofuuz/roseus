@@ -6,6 +6,8 @@ https://github.com/dofuuz/roseus
 Roseus: A perceptually uniform colormap with full range of lightness
 """
 
+import bisect
+
 import colour
 import numpy as np
 import matplotlib.pyplot as plt
@@ -65,21 +67,32 @@ def gen_colormap(hue_range=(-185, 170), chroma_shape='cos', lightness_range=(2, 
 
     j = np.linspace(lightness_range[0], lightness_range[1], POINTS)
 
-    # desaturate into sRGB gamut
-    for c_mul in np.arange(45, 0, -0.1):
-        if c_mul < 20:
-            return None, sum_len * c_mul * (lightness_range[1] - lightness_range[0])
+    def in_gamut(c_mul):
         c_ = c[idx_sel] * c_mul
         h_ = h[idx_sel]
         jch = np.stack([j, c_, h_], axis=-1)
 
         jab = colour.models.JCh_to_Jab(jch)
-        # xyz = colour.CAM02UCS_to_XYZ(jab)
         xyz = colour.CAM16UCS_to_XYZ(jab)
         color_rgb = colour.XYZ_to_sRGB(xyz)
 
-        if 0 <= np.min(color_rgb) and np.max(color_rgb) <= 1:
-            break
+        return 0 <= np.min(color_rgb) and np.max(color_rgb) <= 1
+
+    # search c_mul threshold
+    c_mul_space = np.arange(45, 20, -0.1)
+    cx = bisect.bisect(c_mul_space, False, key=in_gamut)
+    if len(c_mul_space) <= cx:
+        return None, sum_len * 20 * (lightness_range[1] - lightness_range[0])
+
+    # desaturate into sRGB gamut
+    c_mul = c_mul_space[cx]
+    c_ = c[idx_sel] * c_mul
+    h_ = h[idx_sel]
+    jch = np.stack([j, c_, h_], axis=-1)
+
+    jab = colour.models.JCh_to_Jab(jch)
+    xyz = colour.CAM16UCS_to_XYZ(jab)
+    color_rgb = colour.XYZ_to_sRGB(xyz)
 
     arc_len = sum_len * c_mul * (lightness_range[1] - lightness_range[0])
 
