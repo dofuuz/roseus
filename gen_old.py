@@ -142,7 +142,7 @@ if __name__ == "__main__":
     test_cm = ListedColormap(cm_data, name=NAME)
 
     try:
-        from viscm_cam16ucs import viscm
+        from roseus.viscm_cam16ucs import viscm
         viscm(test_cm)
     except ImportError:
         print("viscm not found, falling back on simple display")

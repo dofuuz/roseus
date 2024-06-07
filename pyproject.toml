@@ -1,0 +1,44 @@
+[build-system]
+requires = [
+    "setuptools>=45",
+    "setuptools_scm[toml]>=6.2",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "roseus"
+dynamic = ["version"]
+description = "Colormap family with full range of lightness"
+readme = "README.md"
+requires-python = ">=3.6"
+authors = [
+    { name = "KEUM Myungchul" },
+]
+keywords = [
+    "visualization",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+#dependencies = ["matplotlib"]
+
+[project.optional-dependencies]
+generate = ["colour-science", "matplotlib", "numpy", "colorspacious", "scipy"]
+
+[project.urls]
+Homepage = "https://github.com/dofuuz/roseus"
+Source = "https://github.com/dofuuz/roseus"
+
+[tool.setuptools]
+packages = ["roseus"]
+
+[tool.cibuildwheel]
+# Necessary to see build output from the actual compilation
+build-verbosity = 1
+
+[tool.setuptools_scm]
+write_to = "roseus/_version.py"

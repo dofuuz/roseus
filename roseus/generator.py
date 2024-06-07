@@ -233,7 +233,7 @@ if __name__ == "__main__":
 
     test_cm = ListedColormap(cm_data, name='Roseus')
 
-    from viscm_cam16ucs import viscm
+    from .viscm_cam16ucs import viscm
     viscm(test_cm)
 
     rgbs = (color_rgb*255).round().clip(0, 255).astype('uint8')
