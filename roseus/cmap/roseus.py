@@ -1,7 +1,9 @@
-# Roseus colormap data
+# Roseus colormap family
 # https://github.com/dofuuz/roseus
 
-roseus_data = [
+gen_props = [[-185, 170], 'cos', (2, 99)]
+
+rgb_data = [
     [0.004528, 0.004341, 0.004307],
     [0.005625, 0.006156, 0.006010],
     [0.006628, 0.008293, 0.008161],
@@ -259,12 +261,3 @@ roseus_data = [
     [0.990402, 0.979395, 0.968966],
     [0.997930, 0.983217, 0.976920],
 ]
-
-if __name__ == '__main__':
-    from matplotlib.colors import ListedColormap
-    import matplotlib.pyplot as plt
-    import numpy as np
-
-    rose_cm = ListedColormap(roseus_data, name='Roseus')
-    plt.imshow(np.linspace(0, 100, 256)[None, :], aspect='auto', cmap=rose_cm)
-    plt.show()
