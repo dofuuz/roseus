@@ -1,7 +1,0 @@
-colour-science
-matplotlib
-numpy
-
-# for modified viscm
-colorspacious
-scipy

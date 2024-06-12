@@ -30,9 +30,6 @@ generate = ["colour-science", "matplotlib", "numpy", "colorspacious", "scipy"]
 Homepage = "https://github.com/dofuuz/roseus"
 Source = "https://github.com/dofuuz/roseus"
 
-[tool.setuptools]
-packages = ["roseus"]
-
 [tool.cibuildwheel]
 # Necessary to see build output from the actual compilation
 build-verbosity = 1
