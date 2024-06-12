@@ -17,7 +17,6 @@ from matplotlib.colors import ListedColormap
 
 RES = 2 ** 20
 POINTS = 256
-PLOTS = 'verbose'
 
 
 def gen_colormap(hue_range=(-185, 170), chroma_shape='cos', lightness_range=(2, 99), plots=False):
@@ -101,78 +100,112 @@ def gen_colormap(hue_range=(-185, 170), chroma_shape='cos', lightness_range=(2, 
         print(arc_len)
 
     if plots == 'verbose':
-        # plot J, C, h
-        plt.figure(figsize=(6.4, 3.6))
-
-        ax = plt.subplot(231)
-        ax.plot(j)
-        ax.set_title('Lightness')
-        ax.get_xaxis().set_visible(False)
-
-        ax = plt.subplot(232)
-        ax.plot(c_)
-        ax.set_title('Chroma')
-        ax.get_xaxis().set_visible(False)
-
-        ax = plt.subplot(233)
-        ax.plot(h_)
-        ax.set_title('Hue')
-        ax.get_xaxis().set_visible(False)
-
-        ax = plt.subplot(234)
-        ax.plot(np.diff(j).astype(np.float32))
-        ax.set_title('ΔLightness')
-        ax.get_xaxis().set_visible(False)
-
-        ax = plt.subplot(235)
-        ax.plot(np.diff(c_))
-        ax.set_title('ΔChroma')
-        ax.get_xaxis().set_visible(False)
-
-        ax = plt.subplot(236)
-        ax.plot(np.diff(h_[1:]))
-        ax.set_title('ΔHue')
-        ax.get_xaxis().set_visible(False)
-
-
-        plt.show()
-
-        # CAM16 Jab colorspace
-        ac = np.linspace(-45, 45, 1000)
-        bc = np.linspace(-35, 35, 1000)
-        ac, bc = np.meshgrid(ac, bc)
-        phi = np.degrees(np.arctan2(bc, ac))
-
-        jc = np.searchsorted(h_, phi) / POINTS * (lightness_range[1] - lightness_range[0]) + lightness_range[0]
-
-        xyzs = colour.CAM16UCS_to_XYZ(np.stack([jc, ac, bc], axis=-1))
-        rgbs = colour.XYZ_to_sRGB(xyzs)
-
-        # get sRGB gamut
-        r = rgbs[..., 0]
-        g = rgbs[..., 1]
-        b = rgbs[..., 2]
-        clipped = np.any([r<0, g<0, b<0, 1<r, 1<g, 1<b], axis=0)
-        clipped = np.stack([clipped, clipped, clipped], axis=-1)
-
-        rgbs[clipped] = 0.4426
-
-        # plot gamut
-        ax = plt.subplot()
-        ax.plot(jab[..., 1], jab[..., 2])
-        ax.axis('equal')
-
-        ax.imshow(rgbs, extent=[ac.min(), ac.max(), bc.max(), bc.min()])
-        ax.invert_yaxis()
-        ax.set_title('sRGB color gamut in CAM16-UCS')
-        ax.set_xlabel("a' (green → red)")
-        ax.set_ylabel("b' (blue → yellow)")
-        plt.show()
+        plot_jch(j, c_, h_)
+        # plot_gamut(jab)
 
     return color_rgb, arc_len * c_mul
 
 
+def plot_jch(j, c_, h_):
+    # plot J, C, h
+    plt.figure(figsize=(6.4, 3.6))
+
+    ax = plt.subplot(231)
+    ax.plot(j)
+    ax.set_title('Lightness')
+    ax.get_xaxis().set_visible(False)
+
+    ax = plt.subplot(232)
+    ax.plot(c_)
+    ax.set_title('Chroma')
+    ax.get_xaxis().set_visible(False)
+
+    ax = plt.subplot(233)
+    ax.plot(h_)
+    ax.set_title('Hue')
+    ax.get_xaxis().set_visible(False)
+
+    ax = plt.subplot(234)
+    ax.plot(np.diff(j).astype(np.float32))
+    ax.set_title('ΔLightness')
+    ax.get_xaxis().set_visible(False)
+
+    ax = plt.subplot(235)
+    ax.plot(np.diff(c_))
+    ax.set_title('ΔChroma')
+    ax.get_xaxis().set_visible(False)
+
+    ax = plt.subplot(236)
+    ax.plot(np.diff(h_[1:]))
+    ax.set_title('ΔHue')
+    ax.get_xaxis().set_visible(False)
+
+    plt.show()
+
+
+def plot_gamut(jab):
+    j = jab[..., 0]
+    a = jab[..., 1]
+    b = jab[..., 2]
+    lightness_range = (j[0], j[-1])
+    h_ = np.degrees(np.arctan2(b, a))
+
+    # CAM16 Jab colorspace
+    ac = np.linspace(-45, 45, 1000)
+    bc = np.linspace(-35, 35, 1000)
+    ac, bc = np.meshgrid(ac, bc)
+    phi = np.degrees(np.arctan2(bc, ac))
+
+    jc = np.searchsorted(h_, phi) / POINTS * (lightness_range[1] - lightness_range[0]) + lightness_range[0]
+
+    xyzs = colour.CAM16UCS_to_XYZ(np.stack([jc, ac, bc], axis=-1))
+    rgbs = colour.XYZ_to_sRGB(xyzs)
+
+    # get sRGB gamut
+    r = rgbs[..., 0]
+    g = rgbs[..., 1]
+    b = rgbs[..., 2]
+    clipped = np.any([r<0, g<0, b<0, 1<r, 1<g, 1<b], axis=0)
+    clipped = np.stack([clipped, clipped, clipped], axis=-1)
+
+    rgbs[clipped] = 0.4426
+
+    # plot gamut
+    ax = plt.subplot()
+    ax.plot(jab[..., 1], jab[..., 2])
+    ax.axis('equal')
+
+    ax.imshow(rgbs, extent=[ac.min(), ac.max(), bc.max(), bc.min()])
+    ax.invert_yaxis()
+    ax.set_title('sRGB color gamut in CAM16-UCS')
+    ax.set_xlabel("a' (green → red)")
+    ax.set_ylabel("b' (blue → yellow)")
+    plt.show()
+
+
+def plot_rgb(rgb1):
+    rgbs = (rgb1*255).round().clip(0, 255).astype('uint8')
+
+    seg_simple = 8
+
+    fix, ax = plt.subplots()
+    plt.plot(rgbs[:,0], 'r')
+    plt.plot(rgbs[:,1], 'g')
+    plt.plot(rgbs[:,2], 'b')
+    plt.plot(np.mean(rgbs, axis=1))
+    plt.title('R, G, B and mean(RGB)')
+
+    ax.tick_params(labelbottom=False)
+    ax.set_xticks(np.linspace(0, len(rgb1), seg_simple+1, endpoint=True))
+    ax.set_yticks(np.arange(0, 257, 16))
+
+    ax.grid(which='both')
+    plt.show()
+
+
 if __name__ == "__main__":
+    PLOTS = 'verbose'
+
     plt.rcParams['figure.autolayout'] = True
 
     # hue range
@@ -236,20 +269,4 @@ if __name__ == "__main__":
     from .viscm_cam16ucs import viscm
     viscm(test_cm)
 
-    rgbs = (color_rgb*255).round().clip(0, 255).astype('uint8')
-
-    seg_simple = 8
-
-    fix, ax = plt.subplots()
-    plt.plot(rgbs[:,0], 'r')
-    plt.plot(rgbs[:,1], 'g')
-    plt.plot(rgbs[:,2], 'b')
-    plt.plot(np.mean(rgbs, axis=1))
-    plt.title('R, G, B and mean(RGB)')
-
-    ax.tick_params(labelbottom=False)
-    ax.set_xticks(np.linspace(0, len(cm_data), seg_simple+1, endpoint=True))
-    ax.set_yticks(np.arange(0, 257, 16))
-
-    ax.grid(which='both')
-    plt.show()
+    plot_rgb(color_rgb)
