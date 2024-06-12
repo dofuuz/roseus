@@ -1,9 +1,6 @@
 [build-system]
-requires = [
-    "setuptools>=45",
-    "setuptools_scm[toml]>=6.2",
-]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "roseus"
@@ -40,5 +37,10 @@ packages = ["roseus"]
 # Necessary to see build output from the actual compilation
 build-verbosity = 1
 
-[tool.setuptools_scm]
-write_to = "roseus/_version.py"
+[tool.hatch]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "roseus/_version.py"
