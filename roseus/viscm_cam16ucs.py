@@ -341,7 +341,7 @@ class viscm:
         example_dir = os.path.join(os.path.dirname(__file__), "viscm")
 
         images.append(
-            np.loadtxt(os.path.join(example_dir, "st-helens_before-modified.txt.gz")).T
+            np.load(os.path.join(example_dir, "st-helens_before-modified.npy")).T
         )
         image_args.append({})
 
