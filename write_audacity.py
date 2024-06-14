@@ -8,7 +8,7 @@ Created on Sat Mar 20 11:54:56 2021
 import colour
 import numpy as np
 
-from roseus import gen_colormap
+from roseus.generator import gen_colormap
 
 
 J_RES = 256

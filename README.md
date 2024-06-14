@@ -1,62 +1,80 @@
-# Roseus colormap
+# Roseus colormap family
 
-A perceptually uniform colormap with **full range of lightness**.
+A perceptually uniform colormaps with **full range of lightness**.
 
 
 ## Preview
 
-![roseus-bar](img/roseus-bar.png)
+![roseus-bars](img/roseus-bars.png)
 
 ![audacity-roseus](img/audacity-roseus.png)
 
 
+## Installation
+
+```sh
+pip install roseus
+```
+
+If installation fails, upgrade pip with python -m pip install --upgrade pip and try again.
+
+
 ## Usage
 
-See inside [generated](generated/) for the colormap data and code examples.
+To use with matplotlib, import `roseus.mpl`.
+
+```python
+import matplotlib.pyplot as plt
+import roseus.mpl as rs
+
+plt.imshow(x, cmap=rs.roseus)
+# or
+plt.imshow(x, cmap='rs.roseus')
+```
+
+To prevent confusion in namespace, prefix `rs.` is added. (ex. `rs.arcus`, `rs.b`, `rs.gr`, ...)
 
 
 ## Motivation
 
-The [previous version](https://github.com/dofuuz/roseus/tree/v0.1.0) of this colormap was developed for [Audacity](https://www.audacityteam.org/) spectrogram. Roseus has now become perceptually uniform and aims to be used in a wider range of fields.
+All colormaps of the Roseus family has (almost) full range of lightness. They have excellent contrast which visualize data more clearly.
+
+Roseus was developed for [Audacity](https://www.audacityteam.org/) spectrogram. More perceptually uniform colormaps are added and aim to be used in a wider range of fields.
 
 Further readings about perceptually uniform colormaps:  
 https://bids.github.io/colormap/  
 https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html
 
 
-## The new colormap
+## Look into the colormaps
 
-![viscm-roseus](img/viscm-roseus.png)
+To plot measures of a colormap in Roseus family,
 
+```python
+from roseus.util import plot_measures
+
+plot_measures('roseus')
+```
+
+![viscm-roseus](img/viscm-roseus.png)  
 Note: [viscm](https://github.com/matplotlib/viscm) used in measurements has been modified to target CAM16-UCS instead of CAM02-UCS.
 
-Considerings while making the new colormap (in order of priority):
-- Perceptually uniform
-- Wide range of lightness (almost full 0-100)
-- Colorful, wide range of hue, chroma
-- Originality, keep magenta-ish feeling
-- Pretty
-
-![roseus-gamut](img/roseus-gamut.png)
-
-![roseus-lch](img/roseus-lch.png)
+![roseus-lch](img/roseus-lch.png)  
+All colormaps has [smooth](https://en.wikipedia.org/wiki/Smoothness) chroma, hue transition.
 
 ![roseus-rgb](img/roseus-rgb.png)
 
 
-## Changes from the previous version(v0.1)
+## Changelog
 
-v0.1: [code](https://github.com/dofuuz/roseus/tree/v0.1.0) | [viscm](img/viscm-audaspec.png) | [spectrogram](img/audacity-audaspec1.png)
+#### v1.1
+- Added more colormaps (r, b, cyanus, rbg, arcus, gr, rg, lavendula)
+- Packed into Python package
 
+#### v1.0
+- The colormap is named 'Roseus'. (inspiration from [Viridis](https://sjmgarnier.github.io/viridis/))
 - It was perceptually smooth, but wasn't perceptually uniform. Now it is.
 - Roseus now targets CAM16-UCS color space instead of the obsolute CAM02-UCS.
-- The colormap is named 'Roseus'. (inspiration from [Viridis](https://sjmgarnier.github.io/viridis/))
 
-
-## Findings and candiates
-
-These are some colormaps made during designing Roseus. They are all perceptually uniform(except v0.1) and has almost full range of lightness.
-
-You can generate them using `roseus.py`.
-
-![cmap-findings](img/cmap-findings.png)
+#### [v0.1](https://github.com/dofuuz/roseus/releases/tag/v0.1.0)
+- First release for Audacity spectrogram.
