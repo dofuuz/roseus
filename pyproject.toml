@@ -41,3 +41,6 @@ source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
 version-file = "roseus/_version.py"
+
+[tool.hatch.build.targets.sdist]
+only-include = ["roseus", "tests/unit"]
