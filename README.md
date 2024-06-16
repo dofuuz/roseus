@@ -60,14 +60,12 @@ plot_measures('roseus')
 Note: [viscm](https://github.com/matplotlib/viscm) used in measurements has been modified to target CAM16-UCS instead of CAM02-UCS.
 
 ![roseus-lch](img/roseus-lch.png)  
-All colormaps has [smooth](https://en.wikipedia.org/wiki/Smoothness) chroma, hue transition.
-
-![roseus-rgb](img/roseus-rgb.png)
+All colormaps has symmetric and [smooth](https://en.wikipedia.org/wiki/Smoothness) chroma, hue transition.
 
 
 ## Changelog
 
-#### v1.1
+#### v2.0
 - Added more colormaps (r, b, cyanus, rbg, arcus, gr, rg, lavendula)
 - Packed into Python package
 
