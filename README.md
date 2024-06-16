@@ -78,3 +78,12 @@ All colormaps has [smooth](https://en.wikipedia.org/wiki/Smoothness) chroma, hue
 
 #### [v0.1](https://github.com/dofuuz/roseus/releases/tag/v0.1.0)
 - First release for Audacity spectrogram.
+
+
+### OSS libraries used
+
+#### viscm (MIT)
+A tool for analyzing colormaps and creating new colormaps.  
+https://github.com/matplotlib/viscm
+
+viscm is not used for generating the Roseus family. It's modified to target CAM16-UCS and included for analysis.
