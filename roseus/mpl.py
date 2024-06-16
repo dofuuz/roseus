@@ -1,23 +1,13 @@
 # Roseus colormap family
 # https://github.com/dofuuz/roseus
+# matplotlib interface
 
 from importlib import import_module
 
 import matplotlib as mpl
 from matplotlib.colors import Colormap, ListedColormap
 
-
-cmap_names = [
-    'roseus',
-    'r',
-    'b',
-    'cyanus',
-    'rbg',
-    'arcus',
-    'gr',
-    'rg',
-    'lavendula',
-]
+from .cmap import cmap_names
 
 
 def register_colormap(name: str, rgb_data) -> tuple[Colormap, Colormap]:
@@ -36,3 +26,6 @@ for name in cmap_names:
 
     globals()[name] = cmap
     globals()[f'{name}_r'] = cmap_r
+
+
+__all__ = tuple(cmap_names) + tuple(f'{name}_r' for name in cmap_names)
