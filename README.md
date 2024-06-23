@@ -1,6 +1,11 @@
 # Roseus colormap family
 
-A perceptually uniform colormaps with **full range of lightness**.
+[![PyPI](https://img.shields.io/pypi/v/roseus.svg?logo=pypi)](https://pypi.org/project/roseus/)
+
+Perceptually uniform colormaps with **full range of lightness**.
+
+- Homepage: https://github.com/dofuuz/roseus
+- PyPI: https://pypi.org/project/roseus/
 
 
 ## Preview
@@ -35,6 +40,8 @@ plt.imshow(x, cmap='rs.arcus')
 ```
 
 To prevent confusion in namespace, prefix `rs.` is added. (ex. `rs.arcus`, `rs.b`, `rs.gr`, ...)
+
+For other applications, use `rgb_data` like `from roseus.cmap.cyanus import rgb_data`.
 
 
 ## Motivation
