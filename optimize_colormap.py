@@ -11,13 +11,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.ndimage import maximum_filter
 
-from roseus import gen_colormap
+import roseus.mpl as rs
+from roseus.generator import gen_colormap
 
 
 def batch_colormap(tasks):
     results = []
     for task in tasks:
-        _, score = gen_colormap(task, lightness_range=(3, 97))
+        _, score = gen_colormap(task, chroma_shape='sin', lightness_range=(2, 98))
         results.append(score)
     return results
 
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     
     arc_scores = np.asarray(results, dtype=np.float32)
 
-    plt.imshow(arc_scores.T, extent=(sr[0], sr[1], rr[1], rr[0]), interpolation='none')
+    plt.imshow(arc_scores.T, extent=(sr[0], sr[1], rr[1], rr[0]), interpolation='none', cmap=rs.roseus)
 
     max_index = np.unravel_index(arc_scores.argmax(), arc_scores.shape)
     print(max_index)

@@ -5,9 +5,11 @@ A perceptually uniform colormaps with **full range of lightness**.
 
 ## Preview
 
-![roseus-bars](img/roseus-bars.png)
+![Colorbars](img/roseus-bars.png)
 
-![audacity-roseus](img/audacity-roseus.png)
+![Audio spectrogram using Roseus](img/audacity-roseus.png)
+
+![Depth map using Arcus](img/depthmap-arcus.png)
 
 
 ## Installation
@@ -16,7 +18,7 @@ A perceptually uniform colormaps with **full range of lightness**.
 pip install roseus
 ```
 
-If installation fails, upgrade pip with python -m pip install --upgrade pip and try again.
+If installation fails, upgrade pip with `python -m pip install --upgrade pip` and try again.
 
 
 ## Usage
@@ -27,9 +29,9 @@ To use with matplotlib, import `roseus.mpl`.
 import matplotlib.pyplot as plt
 import roseus.mpl as rs
 
-plt.imshow(x, cmap=rs.roseus)
+plt.imshow(x, cmap=rs.arcus)
 # or
-plt.imshow(x, cmap='rs.roseus')
+plt.imshow(x, cmap='rs.arcus')
 ```
 
 To prevent confusion in namespace, prefix `rs.` is added. (ex. `rs.arcus`, `rs.b`, `rs.gr`, ...)
@@ -49,6 +51,10 @@ https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html
 ## Look into the colormaps
 
 To plot measures of a colormap in Roseus family,
+```sh
+pip install "roseus[generate]"
+```
+install additional dependency. Then,
 
 ```python
 from roseus.util import plot_measures

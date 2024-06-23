@@ -3,7 +3,7 @@
 Roseus colormap generator
 https://github.com/dofuuz/roseus
 
-Roseus: A perceptually uniform colormap with full range of lightness
+Roseus: Perceptually uniform colormaps with full range of lightness
 """
 
 import bisect
@@ -20,6 +20,27 @@ POINTS = 256
 
 
 def gen_colormap(hue_range=(-185, 170), chroma_shape='cos', lightness_range=(2, 99), plots=False):
+    """ Generate a perceptually uniform colormap has symmetric and smooth chroma, hue transition.
+
+    Parameters
+    ----------
+    hue_range : tuple
+        Hue range in degrees.
+    chroma_shape :
+        Shape of chroma transition.
+        One of 'sin', 'circle', 'cos'.
+    lightness_range : tuple
+        Lightness range
+    plots :
+        Set `True` to print details.
+        Set 'verbose' to print additional measures.
+
+    Returns
+    -------
+        Tuple of (color_rgb, score).
+        `color_rgb` is RGB values of the colormap.
+        `score` is value represents how much colormap is colorful.
+    """
     rx = np.linspace(0, 1, RES)
 
     if chroma_shape == 'square':
@@ -96,8 +117,8 @@ def gen_colormap(hue_range=(-185, 170), chroma_shape='cos', lightness_range=(2, 
     arc_len = sum_len * c_mul * (lightness_range[1] - lightness_range[0])
 
     if plots:
-        print(c_mul)
-        print(arc_len)
+        print(f'Max chroma: {c_mul}')
+        print(f'Length of variation: {arc_len}')
 
     if plots == 'verbose':
         plot_jch(j, c_, h_)
@@ -107,7 +128,7 @@ def gen_colormap(hue_range=(-185, 170), chroma_shape='cos', lightness_range=(2, 
 
 
 def plot_jch(j, c_, h_):
-    # plot J, C, h
+    """ Plot transition of Lightness, Chroma, Hue """
     plt.figure(figsize=(6.4, 3.6))
 
     ax = plt.subplot(231)
@@ -144,6 +165,7 @@ def plot_jch(j, c_, h_):
 
 
 def plot_gamut(jab):
+    """ Plot sRGB gamut for colormaps. It is broken for most of colormaps for now."""
     j = jab[..., 0]
     a = jab[..., 1]
     b = jab[..., 2]
@@ -184,6 +206,7 @@ def plot_gamut(jab):
 
 
 def plot_rgb(rgb1):
+    """ Plot RGB values """
     rgbs = (rgb1*255).round().clip(0, 255).astype('uint8')
 
     seg_simple = 8
