@@ -1,10 +1,25 @@
 # Roseus colormap family
 # https://github.com/dofuuz/roseus
 # matplotlib interface
+"""
+matplotlib module of Roseus colormaps.
 
-from importlib import import_module
+Import roseus.mpl to use with matplotlib. The colormaps will be registered to matplotlib with 'rs.' prefix.
+
+Examples
+--------
+import matplotlib.pyplot as plt
+import roseus.mpl as rs
+
+plt.imshow(x, cmap=rs.arcus)
+# or
+plt.imshow(x, cmap='rs.arcus')
+"""
+
+import os.path as osp
 
 import matplotlib as mpl
+import numpy as np
 from matplotlib.colors import Colormap, ListedColormap
 
 from .cmap import cmap_names
@@ -21,8 +36,9 @@ def register_colormap(name: str, rgb_data) -> tuple[Colormap, Colormap]:
 
 
 for name in cmap_names:
-    mod = import_module(f'roseus.cmap.{name}')
-    cmap, cmap_r = register_colormap(name, mod.rgb_data)
+    npy_path = osp.join(osp.dirname(__file__), 'cmap', f'{name}.npy')
+    rgb_data = np.load(npy_path)
+    cmap, cmap_r = register_colormap(name, rgb_data)
 
     globals()[name] = cmap
     globals()[f'{name}_r'] = cmap_r

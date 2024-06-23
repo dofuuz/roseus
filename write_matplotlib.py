@@ -1,3 +1,5 @@
+import numpy as np
+
 from roseus.generator import gen_colormap
 from plot_bars import CMAP_SETTINGS
 
@@ -14,13 +16,15 @@ TAIL = ''']
 
 
 for setting, name in CMAP_SETTINGS:
-    with open(f'roseus/cmap/{name}.py', 'w') as f:
-        color_data, _ = gen_colormap(*setting)
+    color_data, _ = gen_colormap(*setting)
 
+    with open(f'roseus/cmap/{name}.py', 'w') as f:
         f.write(HEAD.format(setting))
         for r, g, b in color_data:
             f.write(f'    [{r:.6f}, {g:.6f}, {b:.6f}],\n')
         f.write(TAIL)
+
+    np.save(f'roseus/cmap/{name}.npy', color_data.astype(np.float32))
 
 
 with open(f'roseus/cmap/__init__.py', 'w') as f:
